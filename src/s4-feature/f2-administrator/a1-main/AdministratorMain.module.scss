@@ -1,0 +1,17 @@
+.sidebar {
+  background: #323a3f;
+
+}
+.sidebarButton {
+  margin-left: 16px;
+}
+.hamburger {
+  transition: all .3s;
+  font-size: 18px;
+}
+.hamburgerActive {
+  transform: rotate(90deg);
+}
+.icon * {
+  fill: white;
+}
