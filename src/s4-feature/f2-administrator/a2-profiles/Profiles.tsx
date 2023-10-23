@@ -149,7 +149,7 @@ const Profiles = () => {
                         display: "flex",
                         justifyContent: "space-between",
                         alignItems: "center",
-                        width: '1385px',
+                        width: '91vw',
                         margin: "20px 10px"
                     }}>
                         <div>Показать <InputNumber min={1} max={15} defaultValue={3}
