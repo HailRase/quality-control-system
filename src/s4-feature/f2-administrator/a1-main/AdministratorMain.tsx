@@ -10,26 +10,33 @@ import Icon, {
 } from '@ant-design/icons';
 import s from './AdministratorMain.module.scss'
 import {ReactComponent as ExitIcon} from "../../../assets/exit-icon.svg";
+import {useNavigate} from "react-router-dom";
 
 const {Header, Sider, Content, Footer} = Layout;
 
 const AdministratorMain = ({children}: { children: React.ReactNode }) => {
+    const navigate = useNavigate()
     const [collapsed, setCollapsed] = useState(true);
 
     const toggleSidebar = () => {
         setCollapsed(!collapsed);
     };
-
+    const onProfilesNavigate = () => {
+        navigate('/')
+    }
+    const onAssessmentCriteriaNavigate = () => {
+        navigate('/assessment-criteria')
+    }
     return (
         <Layout style={{minHeight: '100vh'}}>
             <Sider trigger={null} theme={"dark"} collapsible collapsed={collapsed} style={{background: '#2c3236'}}
                    className={s.sidebar}>
                 <div className="demo-logo-vertical"/>
                 <Menu theme={"dark"} mode="inline" defaultSelectedKeys={['1']} style={{background: '#2c3236'}}>
-                    <Menu.Item key="1" icon={<HomeOutlined/>}>
+                    <Menu.Item key="1" icon={<HomeOutlined/>} onClick={onProfilesNavigate}>
                         Личные кабинеты
                     </Menu.Item>
-                    <Menu.Item key="2" icon={<SettingFilled/>}>
+                    <Menu.Item key="2" icon={<SettingFilled/>} onClick={onAssessmentCriteriaNavigate}>
                         Параметры оценивания
                     </Menu.Item>
                     <Menu.Item key="3" icon={<SettingOutlined/>}>
