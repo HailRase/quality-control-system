@@ -141,7 +141,7 @@ const Profiles = () => {
     return (
         <Space style={{width: '100%'}}>
             <Layout style={{width: '100%'}}>
-                <Header style={{backgroundColor: '#6a757b', color: "white", fontSize: "18px"}}>
+                <Header style={{display: "flex", alignItems:"flex-end",height: '50px',backgroundColor: '#6a757b', color: "white", fontSize: "16px", padding: '20px 30px 0px 10px'}}>
                     Личные кабинеты
                 </Header>
                 <Content style={{height: '100%', width: "100%", maxWidth: "100%", backgroundColor: 'white',}}>
