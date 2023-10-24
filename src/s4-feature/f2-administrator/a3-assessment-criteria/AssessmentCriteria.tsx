@@ -62,7 +62,7 @@ const AssessmentCriteria = () => {
                                 <Input placeholder={'0'} style={{width: '70%'}}/>
                             </Flex>
                             <Flex justify={"center"} align={"center"} style={{width: "10vw", textAlign: 'center'}}>
-                                <Input placeholder={'0'} disabled style={{width: '70%'}}/>
+                                <Input placeholder={'0'} style={{width: '70%'}}/>
                             </Flex>
                             <Flex justify={"flex-end"} align={"center"} style={{width: "15vh"}}>
                                 <Button style={{borderRadius: '3px'}} type={"default"} >Отменить</Button>
