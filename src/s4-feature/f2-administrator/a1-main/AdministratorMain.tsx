@@ -11,7 +11,6 @@ import {
 } from '@ant-design/icons';
 import s from './AdministratorMain.module.scss'
 import {useNavigate} from "react-router-dom";
-import Dictionaries from "../a4-dictionaries/Dictionaries";
 
 const {Header, Sider, Content, Footer} = Layout;
 
@@ -31,6 +30,9 @@ const AdministratorMain = ({children}: { children: React.ReactNode }) => {
     const onDictionariesNavigate = () => {
         navigate('/dictionaries')
     }
+    const onCallSettingsNavigate = () => {
+        navigate('/call-settings')
+    }
     return (
         <Layout style={{minHeight: '100vh'}}>
             <Sider trigger={null} theme={"dark"} collapsible collapsed={collapsed} style={{background: '#2c3236'}}
@@ -46,7 +48,7 @@ const AdministratorMain = ({children}: { children: React.ReactNode }) => {
                     <Menu.Item key="3" icon={<CarryOutOutlined />} onClick={onDictionariesNavigate}>
                         Словари
                     </Menu.Item>
-                    <Menu.Item key="4" icon={<PhoneFilled/>}>
+                    <Menu.Item key="4" icon={<PhoneFilled/>} onClick={onCallSettingsNavigate}>
                         Настройки звонков
                     </Menu.Item>
                     <Menu.Item key="5" icon={<UserAddOutlined/>}>
