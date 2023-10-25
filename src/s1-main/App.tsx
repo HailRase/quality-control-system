@@ -5,6 +5,7 @@ import Login from "../s4-feature/f1-login/Login";
 import AdministratorMain from "../s4-feature/f2-administrator/a1-main/AdministratorMain";
 import Profiles from "../s4-feature/f2-administrator/a2-profiles/Profiles";
 import AssessmentCriteria from "../s4-feature/f2-administrator/a3-assessment-criteria/AssessmentCriteria";
+import Dictionaries from "../s4-feature/f2-administrator/a4-dictionaries/Dictionaries";
 
 function App() {
     const user =
@@ -26,6 +27,7 @@ function App() {
             <Routes>
                 <Route path={'/'} element={<AdministratorMain><Profiles/></AdministratorMain>}/>
                 <Route path={'/assessment-criteria'} element={<AdministratorMain><AssessmentCriteria/></AdministratorMain>}/>
+                <Route path={'/dictionaries'} element={<AdministratorMain><Dictionaries/></AdministratorMain>}/>
             </Routes>
 
             {/*{

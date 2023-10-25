@@ -1,16 +1,17 @@
 import React, {useState} from 'react';
 import {Button, Divider, Layout, Menu} from 'antd';
-import Icon, {
-    HomeOutlined, LogoutOutlined,
+import {
+    CarryOutOutlined,
+    HomeOutlined,
+    LogoutOutlined,
     MenuOutlined,
     PhoneFilled,
-    ProfileOutlined, SettingFilled,
-    SettingOutlined,
+    SettingFilled,
     UserAddOutlined,
 } from '@ant-design/icons';
 import s from './AdministratorMain.module.scss'
-import {ReactComponent as ExitIcon} from "../../../assets/exit-icon.svg";
 import {useNavigate} from "react-router-dom";
+import Dictionaries from "../a4-dictionaries/Dictionaries";
 
 const {Header, Sider, Content, Footer} = Layout;
 
@@ -27,6 +28,9 @@ const AdministratorMain = ({children}: { children: React.ReactNode }) => {
     const onAssessmentCriteriaNavigate = () => {
         navigate('/assessment-criteria')
     }
+    const onDictionariesNavigate = () => {
+        navigate('/dictionaries')
+    }
     return (
         <Layout style={{minHeight: '100vh'}}>
             <Sider trigger={null} theme={"dark"} collapsible collapsed={collapsed} style={{background: '#2c3236'}}
@@ -39,7 +43,7 @@ const AdministratorMain = ({children}: { children: React.ReactNode }) => {
                     <Menu.Item key="2" icon={<SettingFilled/>} onClick={onAssessmentCriteriaNavigate}>
                         Параметры оценивания
                     </Menu.Item>
-                    <Menu.Item key="3" icon={<SettingOutlined/>}>
+                    <Menu.Item key="3" icon={<CarryOutOutlined />} onClick={onDictionariesNavigate}>
                         Словари
                     </Menu.Item>
                     <Menu.Item key="4" icon={<PhoneFilled/>}>
@@ -65,24 +69,27 @@ const AdministratorMain = ({children}: { children: React.ReactNode }) => {
                     height: '50px'
                 }}>
                     {collapsed ? (
-                        <Button type={"text"} onClick={toggleSidebar} className={s.sidebarButton}
+                        <Button type={"default"} ghost onClick={toggleSidebar} className={s.sidebarButton}
                                 icon={<MenuOutlined className={s.hamburger}/>}/>
                     ) : (
-                        <Button type={"text"} onClick={toggleSidebar} className={s.sidebarButton}
+                        <Button type={"default"} ghost onClick={toggleSidebar} className={s.sidebarButton}
                                 icon={<MenuOutlined className={`${s.hamburger} ${s.hamburgerActive}`}/>}/>
                     )}
                 </Header>
-                <Content style={{margin: '24px 16px', background: '#fff'}} >
+                <Content style={{margin: '24px 16px'}} >
                     {children}
                 </Content>
                 <Footer style={{
+                    display: 'flex',
+                    alignItems: 'center',
                     textAlign: 'left',
                     fontWeight: 500,
                     position: "fixed",
                     bottom: 0,
                     width: '100%',
                     backgroundColor: 'white',
-                    borderTop: '1px solid #9ca5a9'
+                    borderTop: '1px solid #9ca5a9',
+                    height: '50px'
                 }}>
                     Copyright ⓒ 2023 by Axata. All rights reserved.
                 </Footer>
