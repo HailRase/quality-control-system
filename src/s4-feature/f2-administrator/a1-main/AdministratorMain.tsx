@@ -33,6 +33,9 @@ const AdministratorMain = ({children}: { children: React.ReactNode }) => {
     const onCallSettingsNavigate = () => {
         navigate('/call-settings')
     }
+    const onSupervisorsNavigate = () => {
+        navigate('/supervisors')
+    }
     return (
         <Layout style={{minHeight: '100vh'}}>
             <Sider trigger={null} theme={"dark"} collapsible collapsed={collapsed} style={{background: '#2c3236'}}
@@ -51,7 +54,7 @@ const AdministratorMain = ({children}: { children: React.ReactNode }) => {
                     <Menu.Item key="4" icon={<PhoneFilled/>} onClick={onCallSettingsNavigate}>
                         Настройки звонков
                     </Menu.Item>
-                    <Menu.Item key="5" icon={<UserAddOutlined/>}>
+                    <Menu.Item key="5" icon={<UserAddOutlined/>} onClick={onSupervisorsNavigate}>
                         Супервизоры
                     </Menu.Item>
                     <Divider style={{borderColor: '#7c8489'}}/>
