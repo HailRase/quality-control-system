@@ -1,15 +1,22 @@
-import React from 'react';
+import React, {ChangeEvent, useEffect, useState} from 'react';
 import s from './Profiles.module.scss'
-import {Flex, Input, InputNumber, Layout, Pagination, Space, Table} from "antd";
+import {Flex, Input, InputNumber, Layout, Pagination, Space, Spin, Table} from "antd";
 import {Content, Footer, Header} from "antd/es/layout/layout";
 import {ColumnsType} from "antd/es/table";
+import {
+    fetchAdministratorProfilesData, StatusType
+} from "../../../s2-bll/b1-administrator/a1-administrator-profiles-reducer/administratorProfiles-reducer";
+import {useAppSelector} from "../../../s2-bll/store";
+import {useDispatch} from "react-redux";
 
 interface DataType {
-    key: React.Key;
-    login: string;
-    number: number;
-    fio: string;
-    email: string;
+    key: React.Key
+    id: string
+    login: string
+    number: string
+    fio: string
+    email: string
+    role: string
 }
 
 const columns: ColumnsType<DataType> = [
@@ -43,140 +50,105 @@ const columns: ColumnsType<DataType> = [
         render: () => <Input/>
     },
 ];
-const dataSource = [
-    {
-        key: '1',
-        login: 'Mike',
-        number: 32,
-        fio: '10 Downing Street',
-        email: '10 Downing Street',
-    },
-    {
-        key: '2',
-        login: 'Mike',
-        number: 32,
-        fio: '10 Downing Street',
-        email: '10 Downing Street',
-    },
-    {
-        key: '3',
-        login: 'Mike',
-        number: 32,
-        fio: '10 Downing Street',
-        email: '10 Downing Street',
-    },
-    {
-        key: '4',
-        login: 'Mike',
-        number: 32,
-        fio: '10 Downing Street',
-        email: '10 Downing Street',
-    },
-    {
-        key: '5',
-        login: 'Mike',
-        number: 32,
-        fio: '10 Downing Street',
-        email: '10 Downing Street',
-    },
-    {
-        key: '6',
-        login: 'Mike',
-        number: 32,
-        fio: '10 Downing Street',
-        email: '10 Downing Street',
-    },
-    {
-        key: '7',
-        login: 'Mike',
-        number: 32,
-        fio: '10 Downing Street',
-        email: '10 Downing Street',
-    },
-    {
-        key: '8',
-        login: 'Mike',
-        number: 32,
-        fio: '10 Downing Street',
-        email: '10 Downing Street',
-    },
-    {
-        key: '9',
-        login: 'Mike',
-        number: 32,
-        fio: '10 Downing Street',
-        email: '10 Downing Street',
-    },
-    {
-        key: '10',
-        login: 'Mike',
-        number: 32,
-        fio: '10 Downing Street',
-        email: '10 Downing Street',
-    },
-    {
-        key: '11',
-        login: 'Mike',
-        number: 32,
-        fio: '10 Downing Street',
-        email: '10 Downing Street',
-    },
-    {
-        key: '12',
-        login: 'Mike',
-        number: 32,
-        fio: '10 Downing Street',
-        email: '10 Downing Street',
-    },
-    {
-        key: '13',
-        login: 'Mike',
-        number: 32,
-        fio: '10 Downing Street',
-        email: '10 Downing Street',
-    },
-];
+
 
 const Profiles = () => {
+    const {items, total, size, page, pages} = useAppSelector(state => state.administratorProfilesData.data)
+    const status = useAppSelector<StatusType>(state => state.administratorProfilesData.status)
+    const errorMessage = useAppSelector(state => state.administratorProfilesData.errorMessage)
+
+    const [pageSize, setPageSize] = useState(size)
+    const [currentPage, setCurrentPage] = useState(page)
+    const [searchParam, setSearchParam] = useState<string>()
+    const dataSource = items.map((item, index) => {
+        return {
+            key: `${index}`,
+            id: item.id,
+            login: `${item.name}`,
+            number: `${item.surname}`,
+            fio: `${item.lastname}`,
+            email: '10 Downing Street',
+            role: item.role
+        }
+    })
+
+    const dispatch = useDispatch<any>()
+
+    useEffect(() => {
+        dispatch(fetchAdministratorProfilesData(currentPage, pageSize, searchParam))
+    }, [currentPage, pageSize, searchParam])
+
+    useEffect(() => {
+        dispatch(fetchAdministratorProfilesData(1, 10))
+    }, [])
+
+    const onChangePageSize = (value: number | null) => {
+        if (value !== null) {
+            setPageSize(value)
+        }
+    }
+    const onChangeSearchParam = (event: ChangeEvent<HTMLInputElement>) => {
+        setSearchParam(event.target.value)
+    }
+
     return (
         <Space style={{width: '100%'}}>
-            <Layout style={{width: '100%'}}>
-                <Header style={{display: "flex", alignItems:"flex-end",height: '50px',backgroundColor: '#6a757b', color: "white", fontSize: "16px", padding: '20px 30px 0px 10px'}}>
-                    Личные кабинеты
-                </Header>
-                <Content style={{height: '100%', width: "100%", maxWidth: "100%", backgroundColor: 'white',}}>
-                    <div style={{
+            {status === "loading"
+                ? <div style={{display: "flex", justifyContent: "center", alignItems: 'center', height: '90vh', width: '90vw'}}>
+                    <Spin tip="Loading" size="large">
+                        <div className="content"/>
+                    </Spin>
+                </div>
+                : <Layout style={{width: '100%'}}>
+                    <Header style={{
                         display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                        width: '91vw',
-                        margin: "20px 10px"
+                        alignItems: "flex-end",
+                        height: '50px',
+                        backgroundColor: '#6a757b',
+                        color: "white",
+                        fontSize: "16px",
+                        padding: '20px 30px 0px 10px'
                     }}>
-                        <div>Показать <InputNumber min={1} max={15} defaultValue={3}
-                                                   style={{width: "55px", display: "inline-block"}}/> записей
+                        Личные кабинеты
+                    </Header>
+                    <Content style={{height: '100%', width: "100%", maxWidth: "100%", backgroundColor: 'white',}}>
+                        <div style={{
+                            display: "flex",
+                            justifyContent: "space-between",
+                            alignItems: "center",
+                            width: '91vw',
+                            margin: "20px 10px"
+                        }}>
+                            <div>Показать <InputNumber value={pageSize}  min={1} max={15} defaultValue={10} onChange={onChangePageSize}
+                                                       style={{width: "55px", display: "inline-block"}}/> записей
+                            </div>
+                            <div>Поиск: <Input autoFocus value={searchParam} onChange={onChangeSearchParam} style={{width: '200px'}}/></div>
                         </div>
-                        <div>Поиск: <Input style={{width: '200px'}}/></div>
-                    </div>
-                    <Table columns={columns} dataSource={dataSource} style={{width: "100%"}} pagination={false}/>
-                </Content>
-                <Footer style={{
-                    display: "flex",
-                    justifyContent: "flex-end",
-                    width: "100%",
-                    backgroundColor: 'white',
-                    marginBottom: '40px'
-                }}>
-                    <Flex style={{width:'100%'}} justify={"space-between"} align={"center"}>
-                        <div>Показано от 1 до 10 из 161 записей</div>
-                        <div><Pagination
-                            showSizeChanger={false}
-
-                            defaultCurrent={3}
-                            total={500}
-                        /></div>
-                    </Flex>
-                </Footer>
-            </Layout>
+                        <Table columns={columns} dataSource={dataSource} style={{width: "100%"}} pagination={false}/>
+                    </Content>
+                    <Footer style={{
+                        display: "flex",
+                        justifyContent: "flex-end",
+                        width: "100%",
+                        backgroundColor: 'white',
+                        marginBottom: '40px'
+                    }}>
+                        <Flex style={{width: '100%'}} justify={"space-between"} align={"center"}>
+                            <div>Показано
+                                от {(currentPage - 1) * pageSize + 1} до {Math.min(currentPage * pageSize, total)} из {total} записей
+                            </div>
+                            <div>
+                                <Pagination
+                                    showSizeChanger={false}
+                                    current={currentPage}
+                                    total={total}
+                                    pageSize={pageSize}
+                                    onChange={(page) => setCurrentPage(page)}
+                                />
+                            </div>
+                        </Flex>
+                    </Footer>
+                </Layout>}
 
         </Space>
     );
