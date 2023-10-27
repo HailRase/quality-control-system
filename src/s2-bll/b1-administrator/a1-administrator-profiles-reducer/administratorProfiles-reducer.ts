@@ -19,10 +19,9 @@ type ActionDataType =
 export type StatusType = "init" | "loading" | "loaded" | "error"
 type InitialStateItemType = {
     name: string
-    lastname: string
-    surname: string
     id: string
     role: string
+    email: string
 }
 export type InitialStateDataType = {
     items: InitialStateItemType[]
@@ -30,6 +29,7 @@ export type InitialStateDataType = {
     page: number,
     size: number,
     pages: number,
+
 }
 
 
@@ -44,17 +44,15 @@ const initialState: InitState = {
         items: [
             {
                 name: "test",
-                lastname: "test",
-                surname: "test",
                 id: "000de131-65f7-41b4-aa0a-25ca978dae41",
-                role: "Оператор"
+                role: "Оператор",
+                email: ''
             },
             {
                 name: "Соловьева Анастасия",
-                lastname: "Соловьева Анастасия",
-                surname: "Соловьева Анастасия",
                 id: "02e6ba88-3cd0-4936-91ef-68b1ca17a405",
-                role: "Оператор"
+                role: "Оператор",
+                email: ''
             }
         ],
         total: 0,
@@ -115,7 +113,27 @@ export const fetchAdministratorProfilesData = (currentPage: number, pageSize: nu
     try {
         dispatch(setAdministratorProfilesDataStatus("loading"))
         const {data} = await administratorProfilesAPI.getAdministratorProfilesData(currentPage, pageSize,searchParam)
-        dispatch(setAdministratorProfilesData(data))
+        dispatch(setAdministratorProfilesData({
+            ...data,
+            items: data.items.map( (item: InitialStateItemType )=> {
+                return {
+                    ...item,
+                    email: item.email === null ? '' : item.email
+                }
+
+            })
+        }))
+        dispatch(setAdministratorProfilesDataStatus("loaded"))
+    } catch (e: any) {
+        dispatch(setAdministratorProfilesDataStatus("error"))
+        dispatch(setAdministratorProfilesDataStatusError(e.message))
+    }
+}
+export const editAdministratorProfilesData = (id: string, email: string): DataThunkAction => async (dispatch) => {
+    try {
+        dispatch(setAdministratorProfilesDataStatus("loading"))
+        await administratorProfilesAPI.editAdministratorProfilesData(id, email)
+        dispatch(fetchAdministratorProfilesData(1, 10))
         dispatch(setAdministratorProfilesDataStatus("loaded"))
     } catch (e: any) {
         dispatch(setAdministratorProfilesDataStatus("error"))

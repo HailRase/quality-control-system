@@ -6,5 +6,8 @@ export const administratorProfilesAPI = {
             return instance.get(`users/?search=${searchParam}&page=${page}&size=${size}`)
         }
         return instance.get(`users/?page=${page}&size=${size}`)
+    },
+    editAdministratorProfilesData(id: string, email: string) {
+        return instance.put(`users/${id}`, {email})
     }
 }
