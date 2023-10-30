@@ -1,11 +1,12 @@
 import React, {ChangeEvent, useEffect, useState} from 'react';
-import s from './Profiles.module.scss'
-import {Flex, Input, InputNumber, Layout, Pagination, Space, Spin, Table} from "antd";
+import {Flex, Input, InputNumber, Layout, notification, Pagination, Space, Spin, Table} from "antd";
 import {Content, Footer, Header} from "antd/es/layout/layout";
 import {ColumnsType} from "antd/es/table";
 import {
     editAdministratorProfilesData,
-    fetchAdministratorProfilesData, StatusType
+    fetchAdministratorProfilesData,
+    setAdministratorProfilesDataStatusError,
+    StatusType
 } from "../../../s2-bll/b1-administrator/a1-administrator-profiles-reducer/administratorProfiles-reducer";
 import {useAppSelector} from "../../../s2-bll/store";
 import {useDispatch} from "react-redux";
@@ -23,7 +24,11 @@ interface DataType {
 
 
 const Profiles = () => {
+
+    const [api, contextHolder] = notification.useNotification();
+
     const [statusEditing, setStatusEditing] = useState<null | string>(null)
+
     const {items, total, size, page, pages} = useAppSelector(state => state.administratorProfilesData.data)
     const status = useAppSelector<StatusType>(state => state.administratorProfilesData.status)
     const errorMessage = useAppSelector(state => state.administratorProfilesData.errorMessage)
@@ -32,6 +37,7 @@ const Profiles = () => {
     const [currentPage, setCurrentPage] = useState(page)
     const [searchParam, setSearchParam] = useState<string>()
     const [email, setEmail] = useState<string>('')
+
     const dataSource = items.map((item, index) => {
         return {
             key: `${index}`,
@@ -92,6 +98,17 @@ const Profiles = () => {
     }, [currentPage, pageSize])
 
     useEffect(() => {
+        if (errorMessage && status === "loaded") {
+            openNotification("success")
+            dispatch(setAdministratorProfilesDataStatusError(''))
+        } else if (errorMessage && status === "error"){
+            openNotification("error")
+            dispatch(setAdministratorProfilesDataStatusError(''))
+        }
+
+    }, [errorMessage])
+
+    useEffect(() => {
         dispatch(fetchAdministratorProfilesData(1, 10))
     }, [])
 
@@ -112,8 +129,18 @@ const Profiles = () => {
         dispatch(fetchAdministratorProfilesData(currentPage, pageSize, searchParam))
     }
 
+    const openNotification = (type: 'success' | 'info' | 'warning' | 'error', title?: string) => {
+        api[type]({
+            message: `${title ? title : errorMessage}`,
+            duration: 1.5,
+            placement: "bottomRight",
+            style: type === "success" ? {backgroundColor: 'rgba(142,248,108,0.62)'} : {backgroundColor: 'rgba(250,117,117,0.38)'}
+        });
+    };
+
     return (
         <Space style={{width: '100%'}}>
+            {contextHolder}
             {status === "loading"
                 ? <div style={{
                     display: "flex",

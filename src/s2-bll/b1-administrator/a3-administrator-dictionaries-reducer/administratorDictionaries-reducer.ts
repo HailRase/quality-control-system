@@ -1,7 +1,5 @@
 import {ThunkAction} from "redux-thunk";
 import {StoreType} from "../../store";
-import {administratorProfilesAPI} from "../../../s3-dal/d1-administrator/administratorProfilesAPI";
-import {administratorAssessmentCriteriaAPI} from "../../../s3-dal/d1-administrator/administratorAssessmentCriteriaAPI";
 import {administratorDictionariesAPI} from "../../../s3-dal/d1-administrator/administratorDictionariesAPI";
 
 const SET_ADMINISTRATOR_DICTIONARIES_DATA = "SET_ADMINISTRATOR_DICTIONARIES_DATA";
@@ -98,7 +96,7 @@ const setAdministratorDictionariesDataStatus = (status: StatusType) => {
         status
     } as const
 }
-const setAdministratorDictionariesDataStatusError = (errorMessage: string) => {
+export const setAdministratorDictionariesDataStatusError = (errorMessage: string) => {
     return {
         type: SET_ADMINISTRATOR_DICTIONARIES_ERROR,
         errorMessage
@@ -120,7 +118,10 @@ export const fetchAdministratorDictionariesData = (currentPage: number, pageSize
 export const addNewAdministratorDictionariesData = (title: string, modelTitle: string, color: string): DataThunkAction => async (dispatch) => {
     try {
         dispatch(setAdministratorDictionariesDataStatus("loading"))
-        await administratorDictionariesAPI.addAdministratorDictionariesData(title, modelTitle, color)
+        const {status} = await administratorDictionariesAPI.addAdministratorDictionariesData(title, modelTitle, color)
+        status === 200
+            ? dispatch(setAdministratorDictionariesDataStatusError('Успешно добавлено!'))
+            : dispatch(setAdministratorDictionariesDataStatus("error"))
         dispatch(fetchAdministratorDictionariesData(1,10))
         dispatch(setAdministratorDictionariesDataStatus("loaded"))
     } catch (e: any) {
@@ -131,7 +132,10 @@ export const addNewAdministratorDictionariesData = (title: string, modelTitle: s
 export const deleteNewAdministratorDictionariesData = (id: number): DataThunkAction => async (dispatch) => {
     try {
         dispatch(setAdministratorDictionariesDataStatus("loading"))
-        await administratorDictionariesAPI.deleteAdministratorDictionariesData(id)
+        const {status} = await administratorDictionariesAPI.deleteAdministratorDictionariesData(id)
+        status === 200
+            ? dispatch(setAdministratorDictionariesDataStatusError('Успешно удалено!'))
+            : dispatch(setAdministratorDictionariesDataStatus("error"))
         dispatch(fetchAdministratorDictionariesData(1,10))
         dispatch(setAdministratorDictionariesDataStatus("loaded"))
     } catch (e: any) {
@@ -142,7 +146,10 @@ export const deleteNewAdministratorDictionariesData = (id: number): DataThunkAct
 export const editNewAdministratorDictionariesData = (id: number, title: string, modelTitle: string, color: string): DataThunkAction => async (dispatch) => {
     try {
         dispatch(setAdministratorDictionariesDataStatus("loading"))
-        await administratorDictionariesAPI.editAdministratorDictionariesData(id, title, modelTitle, color)
+        const {status} = await administratorDictionariesAPI.editAdministratorDictionariesData(id, title, modelTitle, color)
+        status === 200
+            ? dispatch(setAdministratorDictionariesDataStatusError('Успешно изменено!'))
+            : dispatch(setAdministratorDictionariesDataStatus("error"))
         dispatch(fetchAdministratorDictionariesData(1,10))
         dispatch(setAdministratorDictionariesDataStatus("loaded"))
     } catch (e: any) {

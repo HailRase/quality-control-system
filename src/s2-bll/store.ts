@@ -13,6 +13,9 @@ import {
 import {
     administratorDictionariesReducer
 } from "./b1-administrator/a3-administrator-dictionaries-reducer/administratorDictionaries-reducer";
+import {
+    administratorSupervisorReducer
+} from "./b1-administrator/a5-administrator-supervisor-reducer/administratorSupervisor-reducer";
 
 
 const rootReducer = combineReducers({
@@ -20,6 +23,7 @@ const rootReducer = combineReducers({
     administratorAssessmentCriteriaData: administratorAssessmentCriteriaReducer,
     administratorDictionariesData: administratorDictionariesReducer,
     administratorCallSettingsData: administratorCallSettingsReducer,
+    administratorSupervisorData: administratorSupervisorReducer,
 })
 
 const store = legacy_createStore(rootReducer, applyMiddleware(thunkMiddleware))

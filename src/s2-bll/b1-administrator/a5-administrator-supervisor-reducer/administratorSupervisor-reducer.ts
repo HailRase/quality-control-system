@@ -1,9 +1,7 @@
 import {ThunkAction} from "redux-thunk";
 import {StoreType} from "../../store";
-import {administratorProfilesAPI} from "../../../s3-dal/d1-administrator/administratorProfilesAPI";
-import {administratorAssessmentCriteriaAPI} from "../../../s3-dal/d1-administrator/administratorAssessmentCriteriaAPI";
-import {administratorDictionariesAPI} from "../../../s3-dal/d1-administrator/administratorDictionariesAPI";
 import {administratorSupervisorAPI} from "../../../s3-dal/d1-administrator/administratorSupervisorAPI";
+import {AxiosError} from "axios";
 
 const SET_ADMINISTRATOR_SUPERVISOR_DATA = "SET_ADMINISTRATOR_SUPERVISOR_DATA";
 const SET_ADMINISTRATOR_SUPERVISOR_STATUS = "SET_ADMINISTRATOR_SUPERVISOR_STATUS"
@@ -21,10 +19,11 @@ type ActionDataType =
 
 export type StatusType = "init" | "loading" | "loaded" | "error"
 type InitialStateItemType = {
-    name: string
-    id: string
-    email: string
-    role: string
+    id: string,
+    name: string,
+    email: string,
+    role: string,
+    login: string
 }
 export type InitialStateDataType = {
     items: InitialStateItemType[]
@@ -46,10 +45,11 @@ const initialState: InitState = {
     data: {
         items: [
             {
-                name: "",
-                id: "",
-                email: "",
-                role: ""
+                id: '',
+                name: '',
+                email: '',
+                role: '',
+                login: ''
             }
         ],
         total: 0,
@@ -99,7 +99,7 @@ const setAdministratorSupervisorDataStatus = (status: StatusType) => {
         status
     } as const
 }
-const setAdministratorSupervisorDataStatusError = (errorMessage: string) => {
+export const setAdministratorSupervisorDataStatusError = (errorMessage: string) => {
     return {
         type: SET_ADMINISTRATOR_SUPERVISOR_ERROR,
         errorMessage
@@ -118,13 +118,17 @@ export const fetchAdministratorSupervisorData = (currentPage: number, pageSize: 
     }
 }
 
-export const addNewAdministratorSupervisorData = (email: string, name: string, lastname: string, surname: string): DataThunkAction => async (dispatch) => {
+export const addNewAdministratorSupervisorData = (name: string, password: string, email: string, login: string): DataThunkAction => async (dispatch) => {
     try {
         dispatch(setAdministratorSupervisorDataStatus("loading"))
-        await administratorSupervisorAPI.addAdministratorSupervisorData(email, name, lastname, surname)
+        const {status} = await administratorSupervisorAPI.addAdministratorSupervisorData(name, password, email, login)
+        status === 200
+            ? dispatch(setAdministratorSupervisorDataStatusError('Успешно добавлено!'))
+            : dispatch(setAdministratorSupervisorDataStatus("error"))
         dispatch(fetchAdministratorSupervisorData(1,10))
         dispatch(setAdministratorSupervisorDataStatus("loaded"))
     } catch (e: any) {
+        console.log(e)
         dispatch(setAdministratorSupervisorDataStatus("error"))
         dispatch(setAdministratorSupervisorDataStatusError(e.message))
     }
@@ -132,7 +136,10 @@ export const addNewAdministratorSupervisorData = (email: string, name: string, l
 export const deleteNewAdministratorSupervisorData = (id: number): DataThunkAction => async (dispatch) => {
     try {
         dispatch(setAdministratorSupervisorDataStatus("loading"))
-        await administratorSupervisorAPI.deleteAdministratorSupervisorData(id)
+        const {status} = await administratorSupervisorAPI.deleteAdministratorSupervisorData(id)
+        status === 200
+            ? dispatch(setAdministratorSupervisorDataStatusError('Успешно удалено!'))
+            : dispatch(setAdministratorSupervisorDataStatus("error"))
         dispatch(fetchAdministratorSupervisorData(1,10))
         dispatch(setAdministratorSupervisorDataStatus("loaded"))
     } catch (e: any) {
@@ -140,10 +147,13 @@ export const deleteNewAdministratorSupervisorData = (id: number): DataThunkActio
         dispatch(setAdministratorSupervisorDataStatusError(e.message))
     }
 }
-export const editNewAdministratorSupervisorData = (id: number, email: string, name: string, lastname: string, surname: string): DataThunkAction => async (dispatch) => {
+export const editNewAdministratorSupervisorData = (id: string, email: string, name: string, login: string): DataThunkAction => async (dispatch) => {
     try {
         dispatch(setAdministratorSupervisorDataStatus("loading"))
-        await administratorSupervisorAPI.editAdministratorSupervisorData(id, email, name, lastname, surname)
+        const {status} = await administratorSupervisorAPI.editAdministratorSupervisorData(id, email, name, login)
+        status === 200
+            ? dispatch(setAdministratorSupervisorDataStatusError('Успешно изменено!'))
+            : dispatch(setAdministratorSupervisorDataStatus("error"))
         dispatch(fetchAdministratorSupervisorData(1,10))
         dispatch(setAdministratorSupervisorDataStatus("loaded"))
     } catch (e: any) {
@@ -154,7 +164,10 @@ export const editNewAdministratorSupervisorData = (id: number, email: string, na
 export const editNewAdministratorSupervisorPasswordData = (id: string, password: string): DataThunkAction => async (dispatch) => {
     try {
         dispatch(setAdministratorSupervisorDataStatus("loading"))
-        await administratorSupervisorAPI.editAdministratorSupervisorPasswordData(id, password)
+        const {status} = await administratorSupervisorAPI.editAdministratorSupervisorPasswordData(id, password)
+        status === 200
+            ? dispatch(setAdministratorSupervisorDataStatusError('Успешно изменено!'))
+            : dispatch(setAdministratorSupervisorDataStatus("error"))
         dispatch(fetchAdministratorSupervisorData(1,10))
         dispatch(setAdministratorSupervisorDataStatus("loaded"))
     } catch (e: any) {

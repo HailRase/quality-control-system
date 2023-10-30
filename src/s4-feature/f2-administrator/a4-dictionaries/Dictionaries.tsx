@@ -1,18 +1,18 @@
 import React, {ChangeEvent, useEffect, useState} from 'react';
-import {Button, ColorPicker, Flex, Input, Layout, Space} from "antd";
+import {Button, ColorPicker, Flex, Input, Layout, notification, Popconfirm, Space} from "antd";
 import {Content, Footer, Header} from "antd/es/layout/layout";
 import s from './Dictionaries.module.scss'
 import {MinusSquareOutlined, PlusSquareOutlined} from "@ant-design/icons";
 import {useDispatch} from "react-redux";
 import {
-    addNewAdministratorDictionariesData, deleteNewAdministratorDictionariesData, editNewAdministratorDictionariesData,
-    fetchAdministratorDictionariesData
+    addNewAdministratorDictionariesData,
+    deleteNewAdministratorDictionariesData,
+    editNewAdministratorDictionariesData,
+    fetchAdministratorDictionariesData,
+    setAdministratorDictionariesDataStatusError
 } from "../../../s2-bll/b1-administrator/a3-administrator-dictionaries-reducer/administratorDictionaries-reducer";
 import {useAppSelector} from "../../../s2-bll/store";
 import {Color} from "antd/es/color-picker";
-import {
-    editNewAdministratorAssessmentCriteriaData
-} from "../../../s2-bll/b1-administrator/a2-administrator-assessment-criteria-reducer/administratorAssessmentCriteria-reducer";
 
 interface DictionariesType {
     title: string,
@@ -48,7 +48,12 @@ const dictionaries: DictionariesType[] = [
 ]
 
 const Dictionaries = () => {
+
+    const [api, contextHolder] = notification.useNotification();
+
     const {items, size, pages, page, total} = useAppSelector(state => state.administratorDictionariesData.data)
+    const status = useAppSelector(state => state.administratorDictionariesData.status)
+    const errorMessage = useAppSelector(state => state.administratorDictionariesData.errorMessage)
 
     const [title, setTitle] = useState<string>('')
     const [modelTitle, setModelTitle] = useState<string>('')
@@ -66,6 +71,17 @@ const Dictionaries = () => {
     useEffect(() => {
         dispatch(fetchAdministratorDictionariesData(1, 10))
     }, [])
+
+    useEffect(() => {
+        if (errorMessage && status === "loaded") {
+            openNotification("success")
+            dispatch(setAdministratorDictionariesDataStatusError(''))
+        } else if (errorMessage && status === "error") {
+            openNotification("error")
+            dispatch(setAdministratorDictionariesDataStatusError(''))
+        }
+
+    }, [errorMessage])
 
     const onChangeTitleHandler = (e: ChangeEvent<HTMLInputElement>) => setTitle(e.currentTarget.value)
     const onChangeModelTitleHandler = (e: ChangeEvent<HTMLTextAreaElement>) => setModelTitle(e.currentTarget.value)
@@ -86,17 +102,30 @@ const Dictionaries = () => {
     }
 
     const onAddDictionaryHandler = () => {
-        dispatch(addNewAdministratorDictionariesData(title, modelTitle, color))
-        setTitle('')
-        setModelTitle('')
-        setColor('')
+        if (title && modelTitle && color){
+            dispatch(addNewAdministratorDictionariesData(title, modelTitle, color))
+            setTitle('')
+            setModelTitle('')
+            setColor('')
+        } else {
+            openNotification("error", "Недостаточно данных для добавления словаря")
+        }
     }
     const onDeleteDictionaryHandler = (id: number) => {
         dispatch(deleteNewAdministratorDictionariesData(id))
     }
+    const openNotification = (type: 'success' | 'info' | 'warning' | 'error', title?: string) => {
+        api[type]({
+            message: `${title ? title : errorMessage}`,
+            duration: 1.5,
+            placement: "bottomRight",
+            style: type === "success" ? {backgroundColor: 'rgba(142,248,108,0.62)'} : {backgroundColor: 'rgba(250,117,117,0.38)'}
+        });
+    };
 
     return (
         <Space className={s.dictionariesWrapper}>
+            {contextHolder}
             <Flex vertical justify={"flex-start"}>
                 <Layout className={s.dictionariesLayoutItem}>
                     <Header className={s.dictionariesLayoutItemHeader}>
@@ -138,8 +167,15 @@ const Dictionaries = () => {
                             </Content>
                             <Footer className={s.dictionariesLayoutItemContentFooter}>
                                 <Flex style={{width: '100%'}} justify={"flex-end"} align={"center"}>
-                                    <Button danger ghost style={{borderRadius: '3px'}}
-                                            onClick={() => onDeleteDictionaryHandler(item.id)}>Удалить</Button>
+                                    <Popconfirm title="Удаление словаря"
+                                                description="Вы уверены, что хотите удалить?"
+                                                onConfirm={() => onDeleteDictionaryHandler(item.id)}
+                                                okText="Удалить"
+                                                cancelText="Отменить">
+                                        <Button danger ghost style={{borderRadius: '3px'}}>
+                                            Удалить
+                                        </Button>
+                                    </Popconfirm>
                                     {statusEditing && statusEditing === item.id
                                         ? <Button type={"primary"} ghost
                                                   onClick={() => onChangeStatusEditingTrue(item.id)}

@@ -1,6 +1,6 @@
 import React, {ChangeEvent, useEffect, useState} from 'react';
 import s from './AssessmentCriteria.module.scss'
-import {Button, Flex, Input, InputNumber, Layout, Space} from "antd";
+import {Button, Flex, Input, InputNumber, Layout, Popconfirm, Space, notification} from "antd";
 import {Content, Header} from "antd/es/layout/layout";
 import {DeleteTwoTone, EditTwoTone, SaveTwoTone} from "@ant-design/icons";
 import {useDispatch} from "react-redux";
@@ -8,9 +8,10 @@ import {
     addNewAdministratorAssessmentCriteriaData,
     deleteNewAdministratorAssessmentCriteriaData,
     editNewAdministratorAssessmentCriteriaData,
-    fetchAdministratorAssessmentCriteriaData
+    fetchAdministratorAssessmentCriteriaData, setAdministratorAssessmentCriteriaDataStatusError
 } from "../../../s2-bll/b1-administrator/a2-administrator-assessment-criteria-reducer/administratorAssessmentCriteria-reducer";
 import {useAppSelector} from "../../../s2-bll/store";
+import {NotificationPlacement} from "antd/es/notification/interface";
 
 interface ParametersType {
     name: string,
@@ -24,17 +25,24 @@ const parameters: ParametersType[] = [
     {name: 'Достоверно предоставленная информация', minValue: 0, maxValue: 5},
     {name: 'Умение слушать', maxValue: 0, minValue: 1},
 ]
+type NotificationType = 'success' | 'info' | 'warning' | 'error';
+
 const AssessmentCriteria = () => {
+
+    const [api, contextHolder] = notification.useNotification();
+
     const [statusEditing, setStatusEditing] = useState<null | number>(null)
     const [newParamName, setNewParamName] = useState<string>()
-    const [newMinValue, setNewMinValue] = useState<number>()
-    const [newMaxValue, setNewMaxValue] = useState<number>()
+    const [newMinValue, setNewMinValue] = useState<number>(0)
+    const [newMaxValue, setNewMaxValue] = useState<number>(0)
 
     const [editingParamName, setEditingParamName] = useState<string>()
     const [editingMinValue, setEditingMinValue] = useState<number>()
     const [editingMaxValue, setEditingMaxValue] = useState<number>()
 
     const {items, page, pages, total, size} = useAppSelector(state => state.administratorAssessmentCriteriaData.data)
+    const status = useAppSelector(state => state.administratorAssessmentCriteriaData.status)
+    const errorMessage = useAppSelector(state => state.administratorAssessmentCriteriaData.errorMessage)
 
     const dispatch = useDispatch<any>()
 
@@ -42,12 +50,26 @@ const AssessmentCriteria = () => {
         dispatch(fetchAdministratorAssessmentCriteriaData(1, 10))
     }, [])
 
+    useEffect(() => {
+        if (errorMessage && status === "loaded") {
+            openNotification("success")
+            dispatch(setAdministratorAssessmentCriteriaDataStatusError(''))
+        } else if (errorMessage && status === "error"){
+            openNotification("error")
+            dispatch(setAdministratorAssessmentCriteriaDataStatusError(''))
+        }
+
+    }, [errorMessage])
+
     const addNewParam = () => {
-        if (newParamName && newMinValue !== undefined && newMaxValue !== undefined)
+        if (newParamName && newMinValue !== undefined && newMaxValue !== undefined) {
             dispatch(addNewAdministratorAssessmentCriteriaData(newParamName, newMaxValue, newMinValue))
-        setNewParamName('')
-        setNewMinValue(0)
-        setNewMaxValue(0)
+            setNewParamName('')
+            setNewMinValue(0)
+            setNewMaxValue(0)
+        } else if (newParamName === '') {
+            openNotification("error", "Недостаточно данных для создания учётной записи")
+        }
     }
     const onDeleteDataHandler = (id: number) => {
         dispatch(deleteNewAdministratorAssessmentCriteriaData(id))
@@ -71,7 +93,9 @@ const AssessmentCriteria = () => {
 
     const onChangeStatusEditingInputTrue = (id: number | null) => {
         setStatusEditing(null)
-        if (id&&editingParamName&&editingMaxValue&&editingMinValue) dispatch(editNewAdministratorAssessmentCriteriaData(id, editingParamName, editingMaxValue, editingMinValue))
+        if (id && editingParamName && editingMaxValue && editingMinValue) {
+            dispatch(editNewAdministratorAssessmentCriteriaData(id, editingParamName, editingMaxValue, editingMinValue))
+        }
 
     }
     const onChangeStatusEditingInputFalse = (id: number | null, editingParamName: string, editingMinValue: number, editingMaxValue: number) => {
@@ -80,8 +104,19 @@ const AssessmentCriteria = () => {
         setEditingMinValue(editingMinValue)
         setEditingMaxValue(editingMaxValue)
     }
+
+    const openNotification = (type: NotificationType, title?: string) => {
+        api[type]({
+            message: `${title ? title :errorMessage}`,
+            duration: 1.5,
+            placement: "bottomRight",
+            style: type === "success" ? {backgroundColor: 'rgba(142,248,108,0.62)'} : {backgroundColor: 'rgba(250,117,117,0.38)'}
+        });
+    };
+
     return (
         <Space style={{width: '100%'}}>
+            {contextHolder}
             <Flex vertical justify={"flex-start"} style={{width: '100%'}}>
                 <Layout style={{width: '93vw'}}>
                     <Header style={{
@@ -149,8 +184,15 @@ const AssessmentCriteria = () => {
                                     />}
                             </Flex>
                             <Flex justify={"flex-end"} align={"center"} style={{width: "15vh"}}>
-                                <Button onClick={() => onDeleteDataHandler(item.id)} danger
-                                        icon={<DeleteTwoTone twoToneColor={'red'}/>}/>
+                                <Popconfirm title="Удаление параметра оценки"
+                                            description="Вы уверены, что хотите удалить?"
+                                            onConfirm={() => onDeleteDataHandler(item.id)}
+                                            placement={'left'}
+                                            okText="Удалить"
+                                            cancelText="Отменить">
+                                    <Button danger
+                                           icon={<DeleteTwoTone twoToneColor={'red'}/>}/>
+                                </Popconfirm>
                             </Flex>
                         </Flex>)}
                     </Content>

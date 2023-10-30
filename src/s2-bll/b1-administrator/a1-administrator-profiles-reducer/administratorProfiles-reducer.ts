@@ -102,7 +102,7 @@ const setAdministratorProfilesDataStatus = (status: StatusType) => {
         status
     } as const
 }
-const setAdministratorProfilesDataStatusError = (errorMessage: string) => {
+export const setAdministratorProfilesDataStatusError = (errorMessage: string) => {
     return {
         type: SET_ADMINISTRATOR_PROFILES_ERROR,
         errorMessage
@@ -132,7 +132,10 @@ export const fetchAdministratorProfilesData = (currentPage: number, pageSize: nu
 export const editAdministratorProfilesData = (id: string, email: string): DataThunkAction => async (dispatch) => {
     try {
         dispatch(setAdministratorProfilesDataStatus("loading"))
-        await administratorProfilesAPI.editAdministratorProfilesData(id, email)
+        const  {status} = await administratorProfilesAPI.editAdministratorProfilesData(id, email)
+        status === 200
+            ? dispatch(setAdministratorProfilesDataStatusError('Успешно изменено!'))
+            : dispatch(setAdministratorProfilesDataStatus("error"))
         dispatch(fetchAdministratorProfilesData(1, 10))
         dispatch(setAdministratorProfilesDataStatus("loaded"))
     } catch (e: any) {

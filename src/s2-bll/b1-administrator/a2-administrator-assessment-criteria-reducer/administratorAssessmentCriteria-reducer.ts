@@ -1,6 +1,5 @@
 import {ThunkAction} from "redux-thunk";
 import {StoreType} from "../../store";
-import {administratorProfilesAPI} from "../../../s3-dal/d1-administrator/administratorProfilesAPI";
 import {administratorAssessmentCriteriaAPI} from "../../../s3-dal/d1-administrator/administratorAssessmentCriteriaAPI";
 
 const SET_ADMINISTRATOR_ASSESSMENT_CRITERIA_DATA = "SET_ADMINISTRATOR_ASSESSMENT_CRITERIA_DATA";
@@ -97,7 +96,7 @@ const setAdministratorAssessmentCriteriaDataStatus = (status: StatusType) => {
         status
     } as const
 }
-const setAdministratorAssessmentCriteriaDataStatusError = (errorMessage: string) => {
+export const setAdministratorAssessmentCriteriaDataStatusError = (errorMessage: string) => {
     return {
         type: SET_ADMINISTRATOR_ASSESSMENT_CRITERIA_ERROR,
         errorMessage
@@ -119,7 +118,10 @@ export const fetchAdministratorAssessmentCriteriaData = (currentPage: number, pa
 export const addNewAdministratorAssessmentCriteriaData = (title: string, max_value: number, min_value: number): DataThunkAction => async (dispatch) => {
     try {
         dispatch(setAdministratorAssessmentCriteriaDataStatus("loading"))
-        await administratorAssessmentCriteriaAPI.addAdministratorAssessmentCriteriaData(title, max_value, min_value)
+        const {status} = await administratorAssessmentCriteriaAPI.addAdministratorAssessmentCriteriaData(title, max_value, min_value)
+        status === 200
+            ? dispatch(setAdministratorAssessmentCriteriaDataStatusError('Успешно добавлено!'))
+            : dispatch(setAdministratorAssessmentCriteriaDataStatus("error"))
         dispatch(fetchAdministratorAssessmentCriteriaData(1,10))
         dispatch(setAdministratorAssessmentCriteriaDataStatus("loaded"))
     } catch (e: any) {
@@ -130,7 +132,10 @@ export const addNewAdministratorAssessmentCriteriaData = (title: string, max_val
 export const deleteNewAdministratorAssessmentCriteriaData = (id: number): DataThunkAction => async (dispatch) => {
     try {
         dispatch(setAdministratorAssessmentCriteriaDataStatus("loading"))
-        await administratorAssessmentCriteriaAPI.deleteAdministratorAssessmentCriteriaData(id)
+        const {status} = await administratorAssessmentCriteriaAPI.deleteAdministratorAssessmentCriteriaData(id)
+        status === 200
+            ? dispatch(setAdministratorAssessmentCriteriaDataStatusError('Успешно удалено!'))
+            : dispatch(setAdministratorAssessmentCriteriaDataStatus("error"))
         dispatch(fetchAdministratorAssessmentCriteriaData(1,10))
         dispatch(setAdministratorAssessmentCriteriaDataStatus("loaded"))
     } catch (e: any) {
@@ -141,7 +146,10 @@ export const deleteNewAdministratorAssessmentCriteriaData = (id: number): DataTh
 export const editNewAdministratorAssessmentCriteriaData = (id: number, title: string, max_value: number, min_value: number): DataThunkAction => async (dispatch) => {
     try {
         dispatch(setAdministratorAssessmentCriteriaDataStatus("loading"))
-        await administratorAssessmentCriteriaAPI.editAdministratorAssessmentCriteriaData(id, title, max_value, min_value)
+        const {status} = await administratorAssessmentCriteriaAPI.editAdministratorAssessmentCriteriaData(id, title, max_value, min_value)
+        status === 200
+            ? dispatch(setAdministratorAssessmentCriteriaDataStatusError('Успешно изменено!'))
+            : dispatch(setAdministratorAssessmentCriteriaDataStatus("error"))
         dispatch(fetchAdministratorAssessmentCriteriaData(1,10))
         dispatch(setAdministratorAssessmentCriteriaDataStatus("loaded"))
     } catch (e: any) {
