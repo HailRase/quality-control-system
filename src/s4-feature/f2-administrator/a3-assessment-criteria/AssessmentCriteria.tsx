@@ -34,7 +34,7 @@ const AssessmentCriteria = () => {
     const [editingMinValue, setEditingMinValue] = useState<number>()
     const [editingMaxValue, setEditingMaxValue] = useState<number>()
 
-    const {items, page, pages, total, size} = useAppSelector(state => state.administratorAssessmentCriteria.data)
+    const {items, page, pages, total, size} = useAppSelector(state => state.administratorAssessmentCriteriaData.data)
 
     const dispatch = useDispatch<any>()
 

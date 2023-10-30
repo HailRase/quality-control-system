@@ -7,11 +7,19 @@ import {
 import {
     administratorAssessmentCriteriaReducer
 } from "./b1-administrator/a2-administrator-assessment-criteria-reducer/administratorAssessmentCriteria-reducer";
+import {
+    administratorCallSettingsReducer
+} from "./b1-administrator/a4-administaror-call-settings-reducer/administratorCallSettings-reducer";
+import {
+    administratorDictionariesReducer
+} from "./b1-administrator/a3-administrator-dictionaries-reducer/administratorDictionaries-reducer";
 
 
 const rootReducer = combineReducers({
     administratorProfilesData: administratorProfilesReducer,
-    administratorAssessmentCriteria: administratorAssessmentCriteriaReducer,
+    administratorAssessmentCriteriaData: administratorAssessmentCriteriaReducer,
+    administratorDictionariesData: administratorDictionariesReducer,
+    administratorCallSettingsData: administratorCallSettingsReducer,
 })
 
 const store = legacy_createStore(rootReducer, applyMiddleware(thunkMiddleware))

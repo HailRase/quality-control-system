@@ -9,6 +9,7 @@ import {
 } from "../../../s2-bll/b1-administrator/a1-administrator-profiles-reducer/administratorProfiles-reducer";
 import {useAppSelector} from "../../../s2-bll/store";
 import {useDispatch} from "react-redux";
+import Search from "antd/es/input/Search";
 
 interface DataType {
     key: React.Key
@@ -79,7 +80,7 @@ const Profiles = () => {
                 onBlur={() => {
                     onSaveEmailHandler(record.id)
                 }}
-                value={statusEditing===record.id ? email :value}
+                value={statusEditing === record.id ? email : value}
                 onChange={onChangeEmailHandler}
             />
         },
@@ -88,7 +89,7 @@ const Profiles = () => {
 
     useEffect(() => {
         dispatch(fetchAdministratorProfilesData(currentPage, pageSize, searchParam))
-    }, [currentPage, pageSize, searchParam])
+    }, [currentPage, pageSize])
 
     useEffect(() => {
         dispatch(fetchAdministratorProfilesData(1, 10))
@@ -105,6 +106,10 @@ const Profiles = () => {
     }
     const onChangeEmailHandler = (event: ChangeEvent<HTMLInputElement>) => {
         setEmail(event.target.value)
+    }
+
+    const onSearchHandler = () => {
+        dispatch(fetchAdministratorProfilesData(currentPage, pageSize, searchParam))
     }
 
     return (
@@ -145,8 +150,14 @@ const Profiles = () => {
                                                        onChange={onChangePageSize}
                                                        style={{width: "55px", display: "inline-block"}}/> записей
                             </div>
-                            <div>Поиск: <Input autoFocus value={searchParam} onChange={onChangeSearchParam}
-                                               style={{width: '200px'}}/></div>
+                            <div style={{
+                                display: "flex",
+                                justifyContent: "center",
+                                alignItems: "center",
+                                gap: '10px'
+                            }}>Поиск: <Search onSearch={onSearchHandler} value={searchParam}
+                                              onChange={onChangeSearchParam}
+                                              style={{width: '200px'}}/></div>
                         </div>
                         <Table columns={columns} dataSource={dataSource} style={{width: "100%"}} pagination={false}/>
                     </Content>
