@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Button, Divider, Layout, Menu} from 'antd';
 import {
     CarryOutOutlined,
@@ -10,13 +10,37 @@ import {
     UserAddOutlined,
 } from '@ant-design/icons';
 import s from './AdministratorMain.module.scss'
-import {useNavigate} from "react-router-dom";
+import {useLocation, useNavigate} from "react-router-dom";
+import {useDispatch} from "react-redux";
+import {logout} from "../../../s2-bll/b0-auth/auth-reducer";
 
 const {Header, Sider, Content, Footer} = Layout;
 
 const AdministratorMain = ({children}: { children: React.ReactNode }) => {
+
     const navigate = useNavigate()
+    const location = useLocation()
+
     const [collapsed, setCollapsed] = useState(true);
+
+    const dispatch = useDispatch<any>()
+
+
+
+    const getMenuSelectedKey = () => {
+        if (location.pathname === '/') {
+            return '1'
+        } else if (location.pathname === '/assessment-criteria') {
+            return '2'
+        } else if (location.pathname === '/dictionaries') {
+            return '3'
+        } else if (location.pathname === '/call-settings') {
+            return '4'
+        } else if (location.pathname === '/supervisors') {
+            return '5'
+        }
+        return 'default'
+    }
 
     const toggleSidebar = () => {
         setCollapsed(!collapsed);
@@ -36,19 +60,25 @@ const AdministratorMain = ({children}: { children: React.ReactNode }) => {
     const onSupervisorsNavigate = () => {
         navigate('/supervisors')
     }
+    const onLogoutHandler = () => {
+        dispatch(logout())
+    }
+
+
     return (
         <Layout style={{minHeight: '100vh'}}>
             <Sider trigger={null} theme={"dark"} collapsible collapsed={collapsed} style={{background: '#2c3236'}}
                    className={s.sidebar}>
                 <div className="demo-logo-vertical"/>
-                <Menu theme={"dark"} mode="inline" defaultSelectedKeys={['1']} style={{background: '#2c3236'}}>
+                <Menu theme={"dark"} mode="inline" defaultSelectedKeys={[getMenuSelectedKey()]}
+                      style={{background: '#2c3236'}}>
                     <Menu.Item key="1" icon={<HomeOutlined/>} onClick={onProfilesNavigate}>
                         Личные кабинеты
                     </Menu.Item>
                     <Menu.Item key="2" icon={<SettingFilled/>} onClick={onAssessmentCriteriaNavigate}>
                         Параметры оценивания
                     </Menu.Item>
-                    <Menu.Item key="3" icon={<CarryOutOutlined />} onClick={onDictionariesNavigate}>
+                    <Menu.Item key="3" icon={<CarryOutOutlined/>} onClick={onDictionariesNavigate}>
                         Словари
                     </Menu.Item>
                     <Menu.Item key="4" icon={<PhoneFilled/>} onClick={onCallSettingsNavigate}>
@@ -58,7 +88,7 @@ const AdministratorMain = ({children}: { children: React.ReactNode }) => {
                         Супервизоры
                     </Menu.Item>
                     <Divider style={{borderColor: '#7c8489'}}/>
-                    <Menu.Item key="6" icon={<LogoutOutlined/>}>
+                    <Menu.Item key="6" icon={<LogoutOutlined/>} onClick={onLogoutHandler}>
                         Выход
                     </Menu.Item>
                 </Menu>
@@ -81,7 +111,7 @@ const AdministratorMain = ({children}: { children: React.ReactNode }) => {
                                 icon={<MenuOutlined className={`${s.hamburger} ${s.hamburgerActive}`}/>}/>
                     )}
                 </Header>
-                <Content style={{margin: '24px 16px'}} >
+                <Content style={{margin: '24px 16px'}}>
                     {children}
                 </Content>
                 <Footer style={{

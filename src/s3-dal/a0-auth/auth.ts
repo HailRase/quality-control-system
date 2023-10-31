@@ -1,7 +1,10 @@
 import {instance} from "../instance";
 
-export const administratorProfilesAPI = {
-    authMe(username: string, password: string) {
-        return instance.post(`login`, {username, password})
+export const authAPI = {
+    login(username: string, password: string) {
+        return instance.post(`login`, {login: username, password})
+    },
+    me() {
+        return instance.post(`current_user`)
     }
 }

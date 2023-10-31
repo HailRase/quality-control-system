@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import s from './App.module.scss';
 import {Route, Routes} from "react-router-dom";
 import Login from "../s4-feature/f1-login/Login";
@@ -8,31 +8,40 @@ import AssessmentCriteria from "../s4-feature/f2-administrator/a3-assessment-cri
 import Dictionaries from "../s4-feature/f2-administrator/a4-dictionaries/Dictionaries";
 import CallSettings from "../s4-feature/f2-administrator/a5-сall-settings/CallSettings";
 import Supervisors from "../s4-feature/f2-administrator/a6-supervisors/Supervisors";
+import {useAppSelector} from "../s2-bll/store";
+import {useDispatch} from "react-redux";
+import {initialization} from "../s2-bll/b0-auth/auth-reducer";
 
 function App() {
-    const user =
-        {
-            name: 'administrator',
-            role: 0
-        }
-    /*{
-        name: 'administrator',
-        role: 1
-    }*/
-    /*{
-        name: 'administrator',
-        role: 2
-    }*/
+    const dispatch = useDispatch<any>()
+    const isAuth = useAppSelector(state => state.authData.isAuth)
+    const status = useAppSelector(state => state.authData.status)
+    const role = useAppSelector(state => state.authData.data.role)
+
+    useEffect(() => {
+        dispatch(initialization())
+    }, [])
 
     return (
         <div className={s.container}>
-            <Routes>
-                <Route path={'/'} element={<AdministratorMain><Profiles/></AdministratorMain>}/>
-                <Route path={'/assessment-criteria'} element={<AdministratorMain><AssessmentCriteria/></AdministratorMain>}/>
-                <Route path={'/dictionaries'} element={<AdministratorMain><Dictionaries/></AdministratorMain>}/>
-                <Route path={'/call-settings'} element={<AdministratorMain><CallSettings/></AdministratorMain>}/>
-                <Route path={'/supervisors'} element={<AdministratorMain><Supervisors/></AdministratorMain>}/>
-            </Routes>
+            {role === 'Администратор' ?
+                <Routes>
+                    <Route path={'/'} element={<AdministratorMain><Profiles/></AdministratorMain>}/>
+                    <Route path={'/assessment-criteria'}
+                           element={<AdministratorMain><AssessmentCriteria/></AdministratorMain>}/>
+                    <Route path={'/dictionaries'} element={<AdministratorMain><Dictionaries/></AdministratorMain>}/>
+                    <Route path={'/call-settings'} element={<AdministratorMain><CallSettings/></AdministratorMain>}/>
+                    <Route path={'/supervisors'} element={<AdministratorMain><Supervisors/></AdministratorMain>}/>
+                    <Route path={'/login'} element={<Login/>}/>
+                </Routes>
+                : role === "Оператор"
+                    ? <div>Оператор</div>
+                    : role === "Супервизор"
+                        ? <div>Супервизор</div>
+                        : status === 'loading'
+                            ? ''
+                            :<Login/>
+            }
 
             {/*{
                 user.role === 0 ?

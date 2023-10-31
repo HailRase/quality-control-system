@@ -16,9 +16,11 @@ import {
 import {
     administratorSupervisorReducer
 } from "./b1-administrator/a5-administrator-supervisor-reducer/administratorSupervisor-reducer";
+import {authReducer} from "./b0-auth/auth-reducer";
 
 
 const rootReducer = combineReducers({
+    authData: authReducer,
     administratorProfilesData: administratorProfilesReducer,
     administratorAssessmentCriteriaData: administratorAssessmentCriteriaReducer,
     administratorDictionariesData: administratorDictionariesReducer,

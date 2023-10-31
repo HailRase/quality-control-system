@@ -1,11 +1,14 @@
-import React from 'react';
+import React, {ChangeEvent, useEffect, useState} from 'react';
 import {Button, Card, Dropdown, Form, Input, MenuProps, Space} from "antd";
+import {useDispatch} from "react-redux";
+import {fetchAuthData} from "../../s2-bll/b0-auth/auth-reducer";
+import {useAppSelector} from "../../s2-bll/store";
+import {useLocation, useMatch, useNavigate} from "react-router-dom";
 
 
 type FieldType = {
     username?: string;
     password?: string;
-    remember?: string;
 };
 
 const items: MenuProps['items'] = [
@@ -18,6 +21,19 @@ const items: MenuProps['items'] = [
 const Login = () => {
 
 
+    const role = useAppSelector( state =>  state.authData.data.role)
+    const isAuth = useAppSelector( state =>  state.authData.isAuth)
+    const [username, setUsername] = useState('')
+    const [password, setPassword] = useState('')
+    const location = useLocation()
+    const navigate = useNavigate()
+
+    useEffect(() => {
+        if (isAuth) navigate(-1)
+    },[])
+
+    const dispatch = useDispatch<any>()
+
     const onFinish = (values: any) => {
         console.log('Success:', values);
     };
@@ -25,6 +41,16 @@ const Login = () => {
     const onFinishFailed = (errorInfo: any) => {
         console.log('Failed:', errorInfo);
     };
+
+    const onChangeUsernameHandler = (e: ChangeEvent<HTMLInputElement>) => {
+        setUsername(e.currentTarget.value)
+    }
+    const onChangePasswordHandler = (e: ChangeEvent<HTMLInputElement>) => {
+        setPassword(e.currentTarget.value)
+    }
+    const onClickSendUserData = () => {
+        dispatch(fetchAuthData(username, password))
+    }
 
 
 
@@ -82,26 +108,26 @@ const Login = () => {
                         <Form.Item<FieldType>
                             label="Логин"
                             name="username"
+
                             rules={[{message: 'Введите логин'}]}
                             style={{marginTop: "20px"}}
                         >
-                            <Input/>
+                            <Input required value={username} onChange={onChangeUsernameHandler}/>
                         </Form.Item>
 
                         <Form.Item<FieldType>
                             label="Пароль"
                             name="password"
                             rules={[{
-                                message: 'Введите пароль' +
-                                    ''
+                                message: 'Введите пароль'
                             }]}
                         >
-                            <Input.Password/>
+                            <Input.Password required value={password} onChange={onChangePasswordHandler}/>
                         </Form.Item>
 
 
                         <Form.Item wrapperCol={{offset: 8, span: 16}}>
-                            <Button type="primary" htmlType="submit" style={{borderRadius: "3px"}}>
+                            <Button type="primary" htmlType="submit" style={{borderRadius: "3px"}} onClick={onClickSendUserData}>
                                 Войти
                             </Button>
                         </Form.Item>
