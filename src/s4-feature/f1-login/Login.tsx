@@ -1,7 +1,7 @@
 import React, {ChangeEvent, useEffect, useState} from 'react';
 import {Button, Card, Dropdown, Form, Input, MenuProps, Space} from "antd";
 import {useDispatch} from "react-redux";
-import {fetchAuthData} from "../../s2-bll/b0-auth/auth-reducer";
+import {login} from "../../s2-bll/b1-auth/auth-reducer";
 import {useAppSelector} from "../../s2-bll/store";
 import {useLocation, useMatch, useNavigate} from "react-router-dom";
 
@@ -49,7 +49,7 @@ const Login = () => {
         setPassword(e.currentTarget.value)
     }
     const onClickSendUserData = () => {
-        dispatch(fetchAuthData(username, password))
+        dispatch(login(username, password))
     }
 
 

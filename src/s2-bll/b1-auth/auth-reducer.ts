@@ -103,7 +103,7 @@ export const setAuthDataStatusError = (errorMessage: string) => {
     } as const
 }
 
-export const fetchAuthData = (username: string, password: string): DataThunkAction => async (dispatch) => {
+export const login = (username: string, password: string): DataThunkAction => async (dispatch) => {
     try {
         dispatch(setAuthDataStatus("loading"))
         const {data, status} = await authAPI.login(username, password)
@@ -134,7 +134,7 @@ export const logout = (): DataThunkAction => async (dispatch) => {
         dispatch(setAuthDataStatusError(e.message))
     }
 }
-export const initialization = (): DataThunkAction => async (dispatch) => {
+export const getAuthData = (): DataThunkAction => async (dispatch) => {
     try {
         dispatch(setAuthDataStatus("loading"))
         const {data, status} = await authAPI.me()

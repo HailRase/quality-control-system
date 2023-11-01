@@ -1,6 +1,6 @@
 import React, {useEffect} from 'react';
 import s from './App.module.scss';
-import {Route, Routes} from "react-router-dom";
+import {Route, Routes, useNavigate} from "react-router-dom";
 import Login from "../s4-feature/f1-login/Login";
 import AdministratorMain from "../s4-feature/f2-administrator/a1-main/AdministratorMain";
 import Profiles from "../s4-feature/f2-administrator/a2-profiles/Profiles";
@@ -10,18 +10,36 @@ import CallSettings from "../s4-feature/f2-administrator/a5-сall-settings/CallS
 import Supervisors from "../s4-feature/f2-administrator/a6-supervisors/Supervisors";
 import {useAppSelector} from "../s2-bll/store";
 import {useDispatch} from "react-redux";
-import {initialization} from "../s2-bll/b0-auth/auth-reducer";
+import {getAuthData} from "../s2-bll/b1-auth/auth-reducer";
+import {Spin} from "antd";
+import {initialize} from "../s2-bll/b0-initialize-reducer/initialize-reducer";
 
 function App() {
+    const initialized = useAppSelector(state => state.initializeData.initialized)
     const dispatch = useDispatch<any>()
+    const navigate = useNavigate()
     const isAuth = useAppSelector(state => state.authData.isAuth)
     const status = useAppSelector(state => state.authData.status)
     const role = useAppSelector(state => state.authData.data.role)
 
     useEffect(() => {
-        dispatch(initialization())
+        dispatch(initialize())
     }, [])
 
+    if (!initialized) {
+        return <div style={{
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            alignItems: 'center',
+            height: '90vh',
+            width: '90vw'
+        }}>
+            <Spin tip="Loading" size="large">
+                <div className="content"/>
+            </Spin>
+        </div>
+    }
     return (
         <div className={s.container}>
             {role === 'Администратор' ?
@@ -38,9 +56,7 @@ function App() {
                     ? <div>Оператор</div>
                     : role === "Супервизор"
                         ? <div>Супервизор</div>
-                        : status === 'loading'
-                            ? ''
-                            :<Login/>
+                        : <Login/>
             }
 
             {/*{

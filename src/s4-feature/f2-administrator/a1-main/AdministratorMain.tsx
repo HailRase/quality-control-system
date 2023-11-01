@@ -12,7 +12,7 @@ import {
 import s from './AdministratorMain.module.scss'
 import {useLocation, useNavigate} from "react-router-dom";
 import {useDispatch} from "react-redux";
-import {logout} from "../../../s2-bll/b0-auth/auth-reducer";
+import {logout} from "../../../s2-bll/b1-auth/auth-reducer";
 
 const {Header, Sider, Content, Footer} = Layout;
 
