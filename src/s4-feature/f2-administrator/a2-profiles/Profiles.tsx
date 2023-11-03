@@ -11,6 +11,7 @@ import {
 import {useAppSelector} from "../../../s2-bll/store";
 import {useDispatch} from "react-redux";
 import Search from "antd/es/input/Search";
+import {useNavigate} from "react-router-dom";
 
 interface DataType {
     key: React.Key
@@ -26,10 +27,12 @@ interface DataType {
 const Profiles = () => {
 
     const [api, contextHolder] = notification.useNotification();
+    const navigate = useNavigate()
 
     const [statusEditing, setStatusEditing] = useState<null | string>(null)
 
     const {items, total, size, page, pages} = useAppSelector(state => state.administratorProfilesData.data)
+    const isAuth = useAppSelector(state => state.authData.isAuth)
     const status = useAppSelector<StatusType>(state => state.administratorProfilesData.status)
     const errorMessage = useAppSelector(state => state.administratorProfilesData.errorMessage)
 
@@ -137,6 +140,9 @@ const Profiles = () => {
             style: type === "success" ? {backgroundColor: 'rgba(142,248,108,0.62)'} : {backgroundColor: 'rgba(250,117,117,0.38)'}
         });
     };
+    if (!isAuth) {
+        navigate('/login')
+    }
 
     return (
         <Space style={{width: '100%'}}>
@@ -149,9 +155,7 @@ const Profiles = () => {
                     height: '90vh',
                     width: '90vw'
                 }}>
-                    <Spin tip="Loading" size="large">
-                        <div className="content"/>
-                    </Spin>
+                    <Spin size="large"/>
                 </div>
                 : <Layout style={{width: '100%'}}>
                     <Header style={{

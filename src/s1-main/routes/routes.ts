@@ -3,16 +3,15 @@ export const PATH = {
         LOGIN: '/login',
     },
     ADMINISTRATOR: {
-        PROFILES: '/',
+        PROFILES: '/profiles',
         ASSESSMENT_CRITERIA: '/assessment-criteria',
         DICTIONARIES: '/dictionaries',
         CALL_SETTINGS: '/call-settings',
         SUPERVISORS: '/supervisors',
     },
     SUPERVISOR: {
-        PROFILE: '/edit/profile',
-        PACK: '/edit/pack/:packId',
-        CARD: '/edit/card/:cardId'
+        OPERATOR_LIST: '/operator-list',
+        OPERATOR: '/operator/:userID',
     },
     OPERATOR: {
         RECOVERY: '/recovery',

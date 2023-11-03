@@ -1,0 +1,38 @@
+
+.reportItemsWrapper {
+  width: 100%;
+  margin-bottom: 10px;
+  .reportItemsContainer {
+    width: 100%;
+    .reportItem {
+      width: 33%;
+      border-radius: 3px;
+      padding: 10px;
+      box-shadow: 0px 1px 1px 1px rgba(34, 60, 80, 0.4);
+    }
+  }
+}
+.searchContainer {
+  margin-right: 50px;
+}
+.tableContainer {
+  width: 100%;
+  .tableContainerHeader {
+    padding: 0 10px;
+    background-color: white;
+    font-size: 16px;
+    border-radius: 5px 5px 0 0;
+    border: 2px solid #e5e0e0;
+    border-bottom: none;
+  }
+  .tableContainerContent {
+    border-left: 2px solid #e5e0e0;
+    border-right: 2px solid #e5e0e0;
+  }
+  .tableContainerFooter {
+    border: 2px solid #e5e0e0;
+    border-radius: 0 0 5px 5px;
+    border-bottom: 1px solid #595757;
+    border-top: none;
+  }
+}

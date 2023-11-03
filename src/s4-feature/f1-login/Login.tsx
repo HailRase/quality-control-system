@@ -1,9 +1,10 @@
 import React, {ChangeEvent, useEffect, useState} from 'react';
-import {Button, Card, Dropdown, Form, Input, MenuProps, Space} from "antd";
+import {Button, Card, Dropdown, Form, Input, MenuProps, notification, Space} from "antd";
 import {useDispatch} from "react-redux";
-import {login} from "../../s2-bll/b1-auth/auth-reducer";
+import {login, logout, setAuthDataStatusError} from "../../s2-bll/b1-auth/auth-reducer";
 import {useAppSelector} from "../../s2-bll/store";
-import {useLocation, useMatch, useNavigate} from "react-router-dom";
+import {useNavigate} from "react-router-dom";
+import {PATH} from "../../s1-main/routes/routes";
 
 
 type FieldType = {
@@ -11,36 +12,34 @@ type FieldType = {
     password?: string;
 };
 
-const items: MenuProps['items'] = [
-    {
-        key: '1',
-        label: 'Выйти',
-    },
-];
+
 
 const Login = () => {
 
 
-    const role = useAppSelector( state =>  state.authData.data.role)
+    const [api, contextHolder] = notification.useNotification();
+
+    const errorMessage = useAppSelector( state =>  state.authData.errorMessage)
     const isAuth = useAppSelector( state =>  state.authData.isAuth)
+    const role = useAppSelector( state =>  state.authData.data.role)
+    const status = useAppSelector( state =>  state.authData.status)
+
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
-    const location = useLocation()
+
+    const dispatch = useDispatch<any>()
     const navigate = useNavigate()
 
     useEffect(() => {
-        if (isAuth) navigate(-1)
-    },[])
+        if (errorMessage && status === "loaded") {
+            openNotification("success")
+            dispatch(setAuthDataStatusError(''))
+        } else if (errorMessage && status === "error"){
+            openNotification("error")
+            dispatch(setAuthDataStatusError(''))
+        }
 
-    const dispatch = useDispatch<any>()
-
-    const onFinish = (values: any) => {
-        console.log('Success:', values);
-    };
-
-    const onFinishFailed = (errorInfo: any) => {
-        console.log('Failed:', errorInfo);
-    };
+    }, [errorMessage])
 
     const onChangeUsernameHandler = (e: ChangeEvent<HTMLInputElement>) => {
         setUsername(e.currentTarget.value)
@@ -51,8 +50,31 @@ const Login = () => {
     const onClickSendUserData = () => {
         dispatch(login(username, password))
     }
+    const onLogoutHandler = () => {
+        dispatch(logout())
+        navigate('/login')
+    }
 
-
+    const openNotification = (type: 'success' | 'info' | 'warning' | 'error', title?: string) => {
+        api[type]({
+            message: `${title ? title : errorMessage}`,
+            duration: 1.5,
+            placement: "bottomRight",
+            style: type === "success" ? {backgroundColor: 'rgba(142,248,108,0.62)'} : {backgroundColor: 'rgba(250,117,117,0.38)'}
+        });
+    };
+    const items: MenuProps['items'] = [
+        {
+            key: '1',
+            label: 'Выйти',
+            onClick: onLogoutHandler
+        },
+    ];
+    if (isAuth && role === "Администратор") {
+        navigate(PATH.ADMINISTRATOR.PROFILES)
+    } else if (isAuth && role === "Супервизор") {
+        navigate(PATH.SUPERVISOR.OPERATOR_LIST)
+    }
 
     return (
         <div style={{
@@ -64,6 +86,7 @@ const Login = () => {
             justifyContent: "flex-start",
             backgroundColor: "#f8f9fb"
         }}>
+            {contextHolder}
             <div style={{
                 display: "flex",
                 justifyContent: "space-around",
@@ -100,8 +123,6 @@ const Login = () => {
                         wrapperCol={{span: 16}}
                         style={{maxWidth: 500}}
                         initialValues={{remember: true}}
-                        onFinish={onFinish}
-                        onFinishFailed={onFinishFailed}
                         autoComplete="off"
 
                     >

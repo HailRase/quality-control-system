@@ -1,22 +1,21 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {Button, Divider, Layout, Menu} from 'antd';
 import {
-    CarryOutOutlined,
-    HomeOutlined,
     LogoutOutlined,
     MenuOutlined,
-    PhoneFilled,
+    SearchOutlined,
     SettingFilled,
-    UserAddOutlined,
+    StarFilled,
+    TeamOutlined,
 } from '@ant-design/icons';
-import s from './AdministratorMain.module.scss'
+import s from './SupervisorMain.module.scss'
 import {useLocation, useNavigate} from "react-router-dom";
 import {useDispatch} from "react-redux";
 import {logout} from "../../../s2-bll/b1-auth/auth-reducer";
 
 const {Header, Sider, Content, Footer} = Layout;
 
-const AdministratorMain = ({children}: { children: React.ReactNode }) => {
+const SupervisorMain = ({children}: { children: React.ReactNode }) => {
 
     const navigate = useNavigate()
     const location = useLocation()
@@ -28,16 +27,14 @@ const AdministratorMain = ({children}: { children: React.ReactNode }) => {
 
 
     const getMenuSelectedKey = () => {
-        if (location.pathname === '/') {
+        if (location.pathname === '/operators-list') {
             return '1'
-        } else if (location.pathname === '/assessment-criteria') {
+        } else if (location.pathname === '/operator') {
             return '2'
         } else if (location.pathname === '/dictionaries') {
             return '3'
         } else if (location.pathname === '/call-settings') {
             return '4'
-        } else if (location.pathname === '/supervisors') {
-            return '5'
         }
         return 'default'
     }
@@ -49,17 +46,12 @@ const AdministratorMain = ({children}: { children: React.ReactNode }) => {
         navigate('/')
     }
     const onAssessmentCriteriaNavigate = () => {
-        navigate('/assessment-criteria')
+        navigate('/')
     }
     const onDictionariesNavigate = () => {
-        navigate('/dictionaries')
+        navigate('/')
     }
-    const onCallSettingsNavigate = () => {
-        navigate('/call-settings')
-    }
-    const onSupervisorsNavigate = () => {
-        navigate('/supervisors')
-    }
+
     const onLogoutHandler = () => {
         dispatch(logout())
         navigate('/login')
@@ -68,28 +60,25 @@ const AdministratorMain = ({children}: { children: React.ReactNode }) => {
 
     return (
         <Layout style={{minHeight: '100vh'}}>
-            <Sider trigger={null} theme={"dark"} collapsible collapsed={collapsed} style={{background: '#2c3236'}}
+            <Sider trigger={null} theme={"dark"} collapsible collapsed={collapsed} style={{background: '#ffffff', boxShadow: '12px 0px 13px 0px rgba(34, 60, 80, 0.3)',}}
                    className={s.sidebar}>
                 <div className="demo-logo-vertical"/>
-                <Menu theme={"dark"} mode="inline" defaultSelectedKeys={[getMenuSelectedKey()]}
-                      style={{background: '#2c3236'}}>
-                    <Menu.Item key="1" icon={<HomeOutlined/>} onClick={onProfilesNavigate}>
-                        Личные кабинеты
+                <Menu theme={"light"} mode="inline" defaultSelectedKeys={[getMenuSelectedKey()]}
+                      style={{background: '#ffffff'}}>
+                    <Menu.Item key="1" icon={<TeamOutlined />} onClick={onProfilesNavigate}>
+                        Список операторов
                     </Menu.Item>
-                    <Menu.Item key="2" icon={<SettingFilled/>} onClick={onAssessmentCriteriaNavigate}>
-                        Параметры оценивания
+                    <Menu.Item key="2" icon={<StarFilled />} onClick={onAssessmentCriteriaNavigate}>
+                        Избранные аудио
                     </Menu.Item>
-                    <Menu.Item key="3" icon={<CarryOutOutlined/>} onClick={onDictionariesNavigate}>
-                        Словари
+                    <Menu.Item key="3" icon={<SearchOutlined />} onClick={onDictionariesNavigate}>
+                        Поиск
                     </Menu.Item>
-                    <Menu.Item key="4" icon={<PhoneFilled/>} onClick={onCallSettingsNavigate}>
-                        Настройки звонков
+                    <Divider style={{borderColor: '#ccd2d5'}}/>
+                    <Menu.Item key="4" icon={<SettingFilled/>} onClick={onDictionariesNavigate}>
+                        Настройки
                     </Menu.Item>
-                    <Menu.Item key="5" icon={<UserAddOutlined/>} onClick={onSupervisorsNavigate}>
-                        Супервизоры
-                    </Menu.Item>
-                    <Divider style={{borderColor: '#7c8489'}}/>
-                    <Menu.Item key="6" icon={<LogoutOutlined/>} onClick={onLogoutHandler}>
+                    <Menu.Item key="5" icon={<LogoutOutlined/>} onClick={onLogoutHandler}>
                         Выход
                     </Menu.Item>
                 </Menu>
@@ -100,8 +89,7 @@ const AdministratorMain = ({children}: { children: React.ReactNode }) => {
                     display: "flex",
                     alignItems: "center",
                     padding: 0,
-                    backgroundColor: '#2c3236',
-                    boxShadow: '7px 1px 12px 6px rgba(19, 22, 24, 0.14) inset',
+                    backgroundColor: '#ffffff',
                     height: '50px'
                 }}>
                     {collapsed ? (
@@ -112,7 +100,7 @@ const AdministratorMain = ({children}: { children: React.ReactNode }) => {
                                 icon={<MenuOutlined className={`${s.hamburger} ${s.hamburgerActive}`}/>}/>
                     )}
                 </Header>
-                <Content style={{margin: '24px 16px'}}>
+                <Content>
                     {children}
                 </Content>
                 <Footer style={{
@@ -134,4 +122,4 @@ const AdministratorMain = ({children}: { children: React.ReactNode }) => {
     );
 };
 
-export default AdministratorMain;
+export default SupervisorMain;

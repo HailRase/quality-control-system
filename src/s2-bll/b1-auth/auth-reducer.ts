@@ -37,8 +37,8 @@ type InitState = {
 
 const initialState: InitState = {
     data: {
-        access_token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJrbGlta28ueUBtYWlsLnJ1In0.HF204TR9BJ33_aJpkJsxjuwKsSq9ktGpMlI_z3wpNhc",
-        token_type: "bearer",
+        access_token: "",
+        token_type: "",
         role: null
     },
     isAuth: false,
@@ -106,6 +106,7 @@ export const setAuthDataStatusError = (errorMessage: string) => {
 export const login = (username: string, password: string): DataThunkAction => async (dispatch) => {
     try {
         dispatch(setAuthDataStatus("loading"))
+        debugger
         const {data, status} = await authAPI.login(username, password)
         status === 200
             ? dispatch(setIsAuthData(true))
@@ -116,8 +117,13 @@ export const login = (username: string, password: string): DataThunkAction => as
         dispatch(setAuthData(data))
         dispatch(setAuthDataStatus("loaded"))
     } catch (e: any) {
-        dispatch(setAuthDataStatus("error"))
-        dispatch(setAuthDataStatusError(e.message))
+        if (e.response.status === 404) {
+            dispatch(setAuthDataStatus("error"))
+            dispatch(setAuthDataStatusError("Неверный логин или пароль"))
+        } else {
+            dispatch(setAuthDataStatus("error"))
+            dispatch(setAuthDataStatusError(e.response))
+        }
     }
 }
 export const logout = (): DataThunkAction => async (dispatch) => {
@@ -152,11 +158,18 @@ export const getAuthData = (): DataThunkAction => async (dispatch) => {
                 role: null
             }))
             dispatch(setIsAuthData(false))
+            dispatch(setAuthDataStatusError('Неверный логин или пароль'))
         }
+
         dispatch(setAuthDataStatus("loaded"))
     } catch (e: any) {
-        dispatch(setAuthDataStatus("error"))
-        dispatch(setAuthDataStatusError(e.message))
+        if (e.response.status === 401) {
+            dispatch(setAuthDataStatus("error"))
+            dispatch(setAuthDataStatusError("Не авторизован"))
+        } else {
+            dispatch(setAuthDataStatus("error"))
+            dispatch(setAuthDataStatusError(e.response))
+        }
     }
 }
 
