@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {Button, Flex, Layout, Space, Switch} from "antd";
-import {LeftCircleFilled, PlusOutlined, RightCircleFilled, StarFilled} from "@ant-design/icons";
+import {LeftCircleFilled, MinusOutlined, PlusOutlined, RightCircleFilled, StarFilled} from "@ant-design/icons";
 import {Content, Header} from "antd/es/layout/layout";
 
 const Assessment = () => {
@@ -40,7 +40,7 @@ const Assessment = () => {
                                 <Header style={{backgroundColor: '#e5e5e5', padding: '0 10px 0 10px', height: '40px'}}>
                                     <Flex justify={"space-between"} align={"center"} style={{height: '100%'}}>
                                         <div>Коментарии</div>
-                                        <Button type={'text'} icon={<PlusOutlined/>}
+                                        <Button type={'text'} icon={commentVisible?<MinusOutlined />:<PlusOutlined/>}
                                                 onClick={() => setCommentVisible(!commentVisible)}/>
                                     </Flex>
                                 </Header>
@@ -52,7 +52,7 @@ const Assessment = () => {
                                 <Header style={{backgroundColor: '#e5e5e5', padding: '0 10px 0 10px', height: '40px'}}>
                                     <Flex justify={"space-between"} align={"center"} style={{height: '100%'}}>
                                         <div>Транскрипция звонка</div>
-                                        <Button type={'text'} icon={<PlusOutlined/>} onClick={() => setTransCallVisible(!transCallVisible)}/>
+                                        <Button type={'text'} icon={transCallVisible?<MinusOutlined />:<PlusOutlined/>} onClick={() => setTransCallVisible(!transCallVisible)}/>
                                     </Flex>
                                 </Header>
                                 {transCallVisible && <Content style={{backgroundColor: '#ffffff', padding: '15px'}}>
@@ -63,7 +63,7 @@ const Assessment = () => {
                                 <Header style={{backgroundColor: '#e5e5e5', padding: '0 10px 0 10px', height: '40px'}}>
                                     <Flex justify={"space-between"} align={"center"} style={{height: '100%'}}>
                                         <div>Словари</div>
-                                        <Button type={'text'} icon={<PlusOutlined/>} onClick={() => setDictionaryVisible(!dictionaryVisible)}/>
+                                        <Button type={'text'} icon={dictionaryVisible?<MinusOutlined />:<PlusOutlined/>} onClick={() => setDictionaryVisible(!dictionaryVisible)}/>
                                     </Flex>
                                 </Header>
                                 {dictionaryVisible && <Content style={{backgroundColor: '#ffffff', padding: '15px'}}>
