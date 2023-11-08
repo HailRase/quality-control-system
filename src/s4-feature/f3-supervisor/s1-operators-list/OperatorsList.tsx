@@ -130,7 +130,8 @@ const OperatorsList = () => {
             align: 'center',
             /*sorter: (a: any, b: any) => a.email.length - b.email.length,*/
             render: (value, record, index) => <Button style={{borderColor: '#757575', color: '#757575'}}
-                                                      type={"default"} icon={<EditFilled/>} onClick={() => navigate(`/operator/${value}`)}/>
+                                                      type={"default"} icon={<EditFilled/>}
+                                                      onClick={() => navigate(`/operator/${value}`)}/>
         },
     ];
     return (
@@ -209,7 +210,8 @@ const OperatorsList = () => {
                             </div>
                         </Flex>
                     </Footer>
-                </Layout></Flex>
+                </Layout>
+            </Flex>
 
         </Space>
     );

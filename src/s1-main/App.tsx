@@ -16,6 +16,7 @@ import CSpin from "../common/Spin/CSpin";
 import OperatorsList from "../s4-feature/f3-supervisor/s1-operators-list/OperatorsList";
 import SupervisorMain from "../s4-feature/f3-supervisor/s0-main/SupervisorMain";
 import Operator from "../s4-feature/f3-supervisor/s1-operators-list/o1-operator/Operator";
+import Assessment from "../s4-feature/f3-supervisor/s2-assessment/Assessment";
 
 export const  App = () => {
     const initialized = useAppSelector(state => state.initializeData.initialized)
@@ -50,6 +51,7 @@ export const  App = () => {
                         <Route path={'/'} element={<Navigate to={PATH.SUPERVISOR.OPERATOR_LIST}/>}/>
                         <Route path={PATH.SUPERVISOR.OPERATOR_LIST} element={<SupervisorMain><OperatorsList/></SupervisorMain>}/>
                         <Route path={PATH.SUPERVISOR.OPERATOR} element={<SupervisorMain><Operator/></SupervisorMain>}/>
+                        <Route path={PATH.SUPERVISOR.ASSESSMENT} element={<SupervisorMain><Assessment/></SupervisorMain>}/>
                         <Route path={PATH.AUTH.LOGIN} element={<Login/>}/>
                     </Routes>
                     : role === "Оператор"

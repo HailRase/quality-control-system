@@ -1,11 +1,161 @@
 import React from 'react';
 import s from './Operator.module.scss'
 import {Button, Flex, Input, Layout, Space, Table} from "antd";
-import {FileExcelFilled, PercentageOutlined, PhoneFilled} from "@ant-design/icons";
+import {FileExcelFilled, HistoryOutlined, PercentageOutlined, PhoneFilled} from "@ant-design/icons";
 import {ReactComponent as CrossedPhone} from "../../../../assets/crossed-phone.svg";
 import {Content, Footer, Header} from "antd/es/layout/layout";
+import {ColumnsType} from "antd/es/table";
+import {PATH} from "../../../../s1-main/routes/routes";
+import {useNavigate} from "react-router-dom";
+
+interface OperatorDataType {
+    key: React.Key
+    id: number,
+    title: string,
+    time_created: string,
+    post_marks: string,
+    sum_marks: number,
+    is_cancelled: boolean
+}
 
 const Operator = () => {
+    const navigate = useNavigate()
+    const data: OperatorDataType[] = [
+        {
+            key: '1',
+            id: 1,
+            title: '1934679384769.234234',
+            post_marks: '0/4',
+            sum_marks: 4,
+            time_created: '2023-11-08T09:44:45.125Z',
+            is_cancelled: false
+        },
+        {
+            key: '2',
+            id: 2,
+            title: '1934679384769.234234',
+            post_marks: '0/4',
+            sum_marks: 4,
+            time_created: '2023-11-08T09:44:45.125Z',
+            is_cancelled: false
+        },
+        {
+            key: '3',
+            id: 3,
+            title: '1934679384769.234234',
+            post_marks: '0/4',
+            sum_marks: 4,
+            time_created: '2023-11-08T09:44:45.125Z',
+            is_cancelled: false
+        },
+        {
+            key: '4',
+            id: 5,
+            title: '1934679384769.234234',
+            post_marks: '0/4',
+            sum_marks: 4,
+            time_created: '2023-11-08T09:44:45.125Z',
+            is_cancelled: false
+        },
+        {
+            key: '6',
+            id: 6,
+            title: '1934679384769.234234',
+            post_marks: '0/4',
+            sum_marks: 4,
+            time_created: '2023-11-08T09:44:45.125Z',
+            is_cancelled: false
+        },
+        {
+            key: '7',
+            id: 7,
+            title: '1934679384769.234234',
+            post_marks: '0/4',
+            sum_marks: 4,
+            time_created: '2023-11-08T09:44:45.125Z',
+            is_cancelled: false
+        },
+        {
+            key: '8',
+            id: 8,
+            title: '1934679384769.234234',
+            post_marks: '0/4',
+            sum_marks: 4,
+            time_created: '2023-11-08T09:44:45.125Z',
+            is_cancelled: false
+        },
+        {
+            key: '9',
+            id: 9,
+            title: '1934679384769.234234',
+            post_marks: '0/4',
+            sum_marks: 4,
+            time_created: '2023-11-08T09:44:45.125Z',
+            is_cancelled: false
+        },
+    ]
+    const columns: ColumnsType<OperatorDataType> = [
+        {
+            title: 'Аудио',
+            dataIndex: 'title',
+            key: 'title',
+            align: 'center',
+            sorter: (a: any, b: any) => a.title.length - b.title.length,
+        },
+        {
+            title: 'История',
+            dataIndex: 'id',
+            key: 'id',
+            align: 'center',
+            render: () => <Button type={"primary"} ghost icon={<HistoryOutlined />}/>
+        },
+        {
+            title: 'Проставлено оценок',
+            dataIndex: 'post_marks',
+            key: 'post_marks',
+            align: 'center',
+            sorter: (a: any, b: any) => a.post_marks.length - b.post_marks.length,
+        },
+        {
+            title: 'Сумарная оценка',
+            dataIndex: 'sum_marks',
+            key: 'sum_marks',
+            align: 'center',
+            sorter: (a: any, b: any) => a.sum_marks.length - b.sum_marks.length,
+            /*render: (value, record, index) => <Input
+                onFocus={() => {
+                    setStatusEditing(record.id)
+                    setEmail(value)
+                }}
+                onBlur={() => {
+                    onSaveEmailHandler(record.id)
+                }}
+                value={statusEditing === record.id ? email : value}
+                onChange={onChangeEmailHandler}
+            />*/
+        },
+        {
+            title: 'Дата звонка',
+            dataIndex: 'time_created',
+            key: 'time_created',
+            align: 'center',
+            sorter: (a: any, b: any) => a.time_created.length - b.time_created.length,
+        },
+        {
+            title: 'Анулировано',
+            dataIndex: 'is_cancelled',
+            key: 'is_cancelled',
+            align: 'center',
+        },
+        {
+            title: 'Оценивание',
+            dataIndex: 'id',
+            key: 'id',
+            align: 'center',
+            render: () => <Button onClick={()=> navigate(PATH.SUPERVISOR.ASSESSMENT)} type={'primary'} ghost>Перейти к оцениваню</Button>
+        }
+    ];
+
     return (
         <Space style={{width: '100%'}}>
             <Flex vertical style={{width: '94vw', padding: '30px 20px'}}>
@@ -202,7 +352,7 @@ const Operator = () => {
                     </Header>
                     <Content style={{width: '100%', backgroundColor: '#ffffff', padding: '0 20px'}}>
                         <Flex vertical style={{marginTop: '20px'}}>
-                            <Flex justify={'space-between'} align={'center'}>
+                            <Flex justify={'space-between'} align={'center'} style={{marginBottom: '30px'}}>
                                 <Flex align={'center'}>
                                     <span style={{marginRight:'5px'}}>Показать</span>
                                     <Input value={10} min={1} type={'number'} style={{width: '70px'}}/>
@@ -210,7 +360,7 @@ const Operator = () => {
                                 </Flex>
                                 <Flex align={'center'}><span style={{ marginRight: '5px'}}>Поиск:</span> <Input.Search/></Flex>
                             </Flex>
-                            <Table/>
+                            <Table columns={columns} dataSource={data}/>
                         </Flex>
                     </Content>
                     <Footer>

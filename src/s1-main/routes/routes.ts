@@ -12,6 +12,7 @@ export const PATH = {
     SUPERVISOR: {
         OPERATOR_LIST: '/operator-list',
         OPERATOR: '/operator/:userID',
+        ASSESSMENT: '/evaluate'
     },
     OPERATOR: {
         RECOVERY: '/recovery',
