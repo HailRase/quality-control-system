@@ -17,6 +17,9 @@ import OperatorsList from "../s4-feature/f3-supervisor/s1-operators-list/Operato
 import SupervisorMain from "../s4-feature/f3-supervisor/s0-main/SupervisorMain";
 import Operator from "../s4-feature/f3-supervisor/s1-operators-list/o1-operator/Operator";
 import Assessment from "../s4-feature/f3-supervisor/s2-assessment/Assessment";
+import Favorites from "../s4-feature/f3-supervisor/s3-favorites/Favorites";
+import Search from "../s4-feature/f3-supervisor/s4-search/Search";
+import History from "../s4-feature/f3-supervisor/s5-history/History";
 
 export const  App = () => {
     const initialized = useAppSelector(state => state.initializeData.initialized)
@@ -52,6 +55,9 @@ export const  App = () => {
                         <Route path={PATH.SUPERVISOR.OPERATOR_LIST} element={<SupervisorMain><OperatorsList/></SupervisorMain>}/>
                         <Route path={PATH.SUPERVISOR.OPERATOR} element={<SupervisorMain><Operator/></SupervisorMain>}/>
                         <Route path={PATH.SUPERVISOR.ASSESSMENT} element={<SupervisorMain><Assessment/></SupervisorMain>}/>
+                        <Route path={PATH.SUPERVISOR.FAVORITES} element={<SupervisorMain><Favorites/></SupervisorMain>}/>
+                        <Route path={PATH.SUPERVISOR.SEARCH} element={<SupervisorMain><Search/></SupervisorMain>}/>
+                        <Route path={PATH.SUPERVISOR.HISTORY} element={<SupervisorMain><History/></SupervisorMain>}/>
                         <Route path={PATH.AUTH.LOGIN} element={<Login/>}/>
                     </Routes>
                     : role === "Оператор"

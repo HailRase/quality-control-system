@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {Button, Divider, Layout, Menu} from 'antd';
+import {Button, Divider, Flex, Input, Layout, Menu} from 'antd';
 import {
     LogoutOutlined,
     MenuOutlined,
@@ -42,21 +42,21 @@ const SupervisorMain = ({children}: { children: React.ReactNode }) => {
     const toggleSidebar = () => {
         setCollapsed(!collapsed);
     };
-    const onProfilesNavigate = () => {
+    const onOperatorsListNavigate = () => {
         navigate('/')
     }
-    const onAssessmentCriteriaNavigate = () => {
-        navigate('/')
+    const onFavoritesNavigate = () => {
+        navigate('/favorites')
     }
-    const onDictionariesNavigate = () => {
-        navigate('/')
+    const onSearchNavigate = () => {
+        navigate('/search')
     }
 
     const onLogoutHandler = () => {
         dispatch(logout())
         navigate('/login')
     }
-
+debugger
 
     return (
         <Layout style={{minHeight: '100vh'}}>
@@ -65,19 +65,27 @@ const SupervisorMain = ({children}: { children: React.ReactNode }) => {
                 <div className="demo-logo-vertical"/>
                 <Menu theme={"light"} mode="inline" defaultSelectedKeys={[getMenuSelectedKey()]}
                       style={{background: '#ffffff'}}>
-                    <Menu.Item key="1" icon={<TeamOutlined />} onClick={onProfilesNavigate}>
+                    <Menu.Item key="1" icon={<TeamOutlined />} onClick={onOperatorsListNavigate}>
                         Список операторов
                     </Menu.Item>
-                    <Menu.Item key="2" icon={<StarFilled />} onClick={onAssessmentCriteriaNavigate}>
+                    <Menu.Item key="2" icon={<StarFilled />} onClick={onFavoritesNavigate}>
                         Избранные аудио
                     </Menu.Item>
-                    <Menu.Item key="3" icon={<SearchOutlined />} onClick={onDictionariesNavigate}>
+                    <Menu.Item key="3" icon={<SearchOutlined />} onClick={onSearchNavigate}>
                         Поиск
                     </Menu.Item>
                     <Divider style={{borderColor: '#ccd2d5'}}/>
-                    <Menu.Item key="4" icon={<SettingFilled/>} onClick={onDictionariesNavigate}>
-                        Настройки
-                    </Menu.Item>
+                    {location.pathname === "/operator-list" && <Menu.SubMenu key="submenu" title={'Настройки'} icon={<SettingFilled/>}>
+                        <Menu.Item key="submenu-item-1" disabled style={{paddingLeft: '10px'}}>
+                            <Input type={"date"} style={{width: '100%'}}/>
+                        </Menu.Item>
+                        <Menu.Item key="submenu-item-2" disabled style={{paddingLeft: '10px'}}>
+                            <Input type={"date"} style={{width: '100%'}}/>
+                        </Menu.Item>
+                        <Menu.Item key="submenu-item-3" disabled>
+                            <Flex justify={'flex-end'}><Button type={'primary'} style={{borderRadius: '3px'}}>Применить</Button></Flex>
+                        </Menu.Item>
+                    </Menu.SubMenu>}
                     <Menu.Item key="5" icon={<LogoutOutlined/>} onClick={onLogoutHandler}>
                         Выход
                     </Menu.Item>

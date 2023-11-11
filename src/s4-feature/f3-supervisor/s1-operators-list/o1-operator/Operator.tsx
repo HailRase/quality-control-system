@@ -107,7 +107,7 @@ const Operator = () => {
             dataIndex: 'id',
             key: 'id',
             align: 'center',
-            render: () => <Button type={"primary"} ghost icon={<HistoryOutlined />}/>
+            render: () => <Button type={"primary"} ghost icon={<HistoryOutlined/>} onClick={() => navigate(PATH.SUPERVISOR.HISTORY)}/>
         },
         {
             title: 'Проставлено оценок',
@@ -152,7 +152,8 @@ const Operator = () => {
             dataIndex: 'id',
             key: 'id',
             align: 'center',
-            render: () => <Button onClick={()=> navigate(PATH.SUPERVISOR.ASSESSMENT)} type={'primary'} ghost>Перейти к оцениваню</Button>
+            render: () => <Button onClick={() => navigate(PATH.SUPERVISOR.ASSESSMENT)} type={'primary'} ghost>Перейти к
+                оцениваню</Button>
         }
     ];
 
@@ -262,7 +263,7 @@ const Operator = () => {
                                     width: '100px',
                                     height: '70px'
                                 }}>
-                                    <CrossedPhone className={s.crossedPhone} style={{width: '30px', color: "white", }}/>
+                                    <CrossedPhone className={s.crossedPhone} style={{width: '30px', color: "white",}}/>
                                 </Flex>
                                 <Flex vertical align={"flex-start"} justify={"flex-start"} style={{fontSize: '16px'}}>
                                     <span>Анулировано хороших</span>
@@ -283,7 +284,7 @@ const Operator = () => {
                                     width: '100px',
                                     height: '70px'
                                 }}>
-                                    <CrossedPhone className={s.crossedPhone} style={{width: '30px', color: "white", }}/>
+                                    <CrossedPhone className={s.crossedPhone} style={{width: '30px', color: "white",}}/>
                                 </Flex>
                                 <Flex vertical align={"flex-start"} justify={"flex-start"} style={{fontSize: '16px'}}>
                                     <span>Анулировано плохих</span>
@@ -336,29 +337,45 @@ const Operator = () => {
                     </Flex>
                 </Layout>
                 <Layout style={{width: '100%', marginTop: '30px'}}>
-                    <Header style={{width: '100%', backgroundColor: '#eaeaea', padding: '0 20px', }}>
+                    <Header style={{
+                        width: '100%',
+                        backgroundColor: '#eaeaea',
+                        padding: '0 20px',
+                        borderRadius: '5px 5px 0 0',
+                        border: '2px solid rgba(34, 60, 80, 0.1)',
+                        borderBottom: '1px solid rgba(34, 60, 80, 0.1)'
+                    }}>
                         <Flex justify={'space-between'} align={'center'} style={{fontSize: '16px'}}>
                             <div>Баранчук Светлана Григорьевна</div>
                             <Flex justify={'space-between'} align={'center'}>
                                 <span style={{marginRight: '5px'}}>Выявленных звонков: </span>
-                                 <Input value={0} min={0} type={'number'} style={{width: '70px'}}/>
+                                <Input value={0} min={0} type={'number'} style={{width: '70px'}}/>
                             </Flex>
                             <div>Премия: 0%</div>
                             <Flex>
-                                <Button type={'primary'} ghost style={{borderRadius: '3px', marginRight: '15px'}}>Вернуться в отчёт</Button>
+                                <Button type={'primary'} ghost style={{borderRadius: '3px', marginRight: '15px'}}>Вернуться
+                                    в отчёт</Button>
                                 <Button type={'primary'} ghost icon={<FileExcelFilled/>} style={{borderRadius: '3px'}}/>
                             </Flex>
                         </Flex>
                     </Header>
-                    <Content style={{width: '100%', backgroundColor: '#ffffff', padding: '0 20px'}}>
+                    <Content style={{
+                        width: '100%',
+                        backgroundColor: '#ffffff',
+                        padding: '0 20px',
+                        borderRight: '2px solid rgba(34, 60, 80, 0.1)',
+                        borderLeft: '2px solid rgba(34, 60, 80, 0.1)',
+                        borderBottom: '2px solid rgba(34, 60, 80, 0.1)',
+                        borderRadius: '0 0 5px 5px'
+                    }}>
                         <Flex vertical style={{marginTop: '20px'}}>
                             <Flex justify={'space-between'} align={'center'} style={{marginBottom: '30px'}}>
                                 <Flex align={'center'}>
-                                    <span style={{marginRight:'5px'}}>Показать</span>
+                                    <span style={{marginRight: '5px'}}>Показать</span>
                                     <Input value={10} min={1} type={'number'} style={{width: '70px'}}/>
-                                    <span style={{marginLeft:'5px'}}>записей</span>
+                                    <span style={{marginLeft: '5px'}}>записей</span>
                                 </Flex>
-                                <Flex align={'center'}><span style={{ marginRight: '5px'}}>Поиск:</span> <Input.Search/></Flex>
+                                <Flex align={'center'}><span style={{marginRight: '5px'}}>Поиск:</span> <Input.Search/></Flex>
                             </Flex>
                             <Table columns={columns} dataSource={data}/>
                         </Flex>
