@@ -6,6 +6,7 @@ import {ColumnsType} from "antd/es/table";
 import {HistoryOutlined, InfoCircleFilled} from "@ant-design/icons";
 import {PATH} from "../../../s1-main/routes/routes";
 import ReactAudioPlayer from "react-audio-player";
+import {useNavigate} from "react-router-dom";
 
 interface DataType {
     key: React.Key
@@ -20,7 +21,7 @@ interface DataType {
 }
 
 const Favorites = () => {
-
+    const navigate = useNavigate()
     const data: DataType[] = [
         {
             key: '1',
@@ -171,7 +172,7 @@ const Favorites = () => {
             dataIndex: 'id',
             key: 'id',
             align: 'center',
-            render: () => <Button type={"primary"} ghost icon={<InfoCircleFilled/>}/>
+            render: () => <Button type={"primary"} ghost icon={<InfoCircleFilled/>} onClick={() => navigate(PATH.SUPERVISOR.ASSESSMENT)}/>
         }
     ];
     return (
