@@ -7,13 +7,6 @@ import {useNavigate} from "react-router-dom";
 import {PATH} from "../../s1-main/routes/routes";
 
 
-type FieldType = {
-    username?: string;
-    password?: string;
-};
-
-
-
 const Login = () => {
 
 
@@ -40,6 +33,9 @@ const Login = () => {
         }
 
     }, [errorMessage])
+    useEffect(()=> {
+        isAuth && navigate('/')
+    }, [navigate])
 
     const onChangeUsernameHandler = (e: ChangeEvent<HTMLInputElement>) => {
         setUsername(e.currentTarget.value)
@@ -99,7 +95,7 @@ const Login = () => {
                 <div>Оценка оператора</div>
                 <Dropdown
                     menu={{
-                    items,
+                        items,
                         selectable: true,
                     }}
                 >
@@ -157,6 +153,13 @@ const Login = () => {
             </Space>
         </div>
     );
+};
+
+
+
+type FieldType = {
+    username?: string;
+    password?: string;
 };
 
 export default Login;

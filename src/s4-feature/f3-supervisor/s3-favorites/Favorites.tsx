@@ -1,180 +1,106 @@
-import React from 'react';
-import s from './Favorites.module.scss'
+import React, {useEffect} from 'react';
 import {Button, Flex, Layout, Space, Table} from "antd";
 import {Content, Header} from "antd/es/layout/layout";
 import {ColumnsType} from "antd/es/table";
-import {HistoryOutlined, InfoCircleFilled} from "@ant-design/icons";
-import {PATH} from "../../../s1-main/routes/routes";
-import ReactAudioPlayer from "react-audio-player";
+import {InfoCircleFilled} from "@ant-design/icons";
 import {useNavigate} from "react-router-dom";
+import {useDispatch} from "react-redux";
+import {
+    fetchFavoritesData,
+    ManualEvaluationsType
+} from "../../../s2-bll/b2-supervisor/s7-favorites-reducer/favorites-reducer";
+import {useAppSelector} from "../../../s2-bll/store";
 
 interface DataType {
     key: React.Key
-    number: number
-    id: string
-    operator: string
-    record: string
-    noErrors: number
-    correctAnswer: number
-    reliableInformation: number
-    listeningSkills: number
+    manual_evaluations: ManualEvaluationsType[],
+    id: number,
+    user_name: string,
+    url_rec: string
 }
 
 const Favorites = () => {
     const navigate = useNavigate()
-    const data: DataType[] = [
-        {
-            key: '1',
-            number: 1,
-            id: 'sadfasdfdfgsdfg',
-            operator: 'Павлова Аксана Александровна',
-            record: 'asdfasdfjlajsdl asdfgsdfg sdfgsdfgds dsfgsdfg',
-            noErrors: 0,
-            correctAnswer: 0,
-            reliableInformation: 0,
-            listeningSkills: 0,
-        },
-        {
-            key: '2',
-            number: 2,
-            id: 'sadfasdfdfgsdfg',
-            operator: 'Павлова Аксана Александровна',
-            record: 'asdfasdfjlajsdl asdfgsdfg sdfgsdfgds dsfgsdfg',
-            noErrors: 1,
-            correctAnswer: 0,
-            reliableInformation: 1,
-            listeningSkills: 0,
-        },
-        {
-            key: '3',
-            number: 3,
-            id: 'sadfasdfdfgsdfg',
-            operator: 'Павлова Аксана Александровна',
-            record: 'asdfasdfjlajsdl asdfgsdfg sdfgsdfgds dsfgsdfg',
-            noErrors: 1,
-            correctAnswer: 0,
-            reliableInformation: 1,
-            listeningSkills: 0,
-        },
-        {
-            key: '4',
-            number: 4,
-            id: 'sadfasdfdfgsdfg',
-            operator: 'Павлова Аксана Александровна',
-            record: 'asdfasdfjlajsdl asdfgsdfg sdfgsdfgds dsfgsdfg',
-            noErrors: 1,
-            correctAnswer: 0,
-            reliableInformation: 1,
-            listeningSkills: 0,
-        },
-        {
-            key: '5',
-            number: 5,
-            id: 'sadfasdfdfgsdfg',
-            operator: 'Павлова Аксана Александровна',
-            record: 'asdfasdfjlajsdl asdfgsdfg sdfgsdfgds dsfgsdfg',
-            noErrors: 2,
-            correctAnswer: 1,
-            reliableInformation: 0,
-            listeningSkills: 1,
-        },
-        {
-            key: '6',
-            number: 6,
-            id: 'sadfasdfdfgsdfg',
-            operator: 'Павлова Аксана Александровна',
-            record: '../../../assets/dozhd.mp3',
-            noErrors: 1,
-            correctAnswer: 0,
-            reliableInformation: 1,
-            listeningSkills: 0,
-        },
-        {
-            key: '7',
-            number: 7,
-            id: 'sadfasdfdfgsdfg',
-            operator: 'Павлова Аксана Александровна',
-            record: '../../../assets/dozhd.mp3',
-            noErrors: 0,
-            correctAnswer: 1,
-            reliableInformation: 1,
-            listeningSkills: 1,
-        },
-        {
-            key: '8',
-            number: 8,
-            id: 'sadfasdfdfgsdfg',
-            operator: 'Павлова Аксана Александровна',
-            record: '../../../assets/dozhd.mp3',
-            noErrors: 1,
-            correctAnswer: 1,
-            reliableInformation: 1,
-            listeningSkills: 0,
-        },
-        {
-            key: '9',
-            number: 9,
-            id: 'sadfasdfdfgsdfg',
-            operator: 'Павлова Аксана Александровна',
-            record: '../../../assets/dozhd.mp3',
-            noErrors: 0,
-            correctAnswer: 0,
-            reliableInformation: 1,
-            listeningSkills: 0,
-        },
-    ]
-    const columns: ColumnsType<DataType> = [
+    const dispatch = useDispatch<any>()
+    const data = useAppSelector(state => state.supervisorFavoritesData.data)
+    const status = useAppSelector(state => state.supervisorFavoritesData.status)
+    const errorMessage = useAppSelector(state => state.supervisorFavoritesData.errorMessage)
+
+    useEffect(() => {
+        dispatch(fetchFavoritesData())
+    }, [])
+
+    const tableData: DataType[] = data.map( (item, index) =>  {
+        return {
+            key: index+1,
+            ...item
+        }
+    })
+    const columns: ColumnsType<DataType> =  [
         {
             title: 'Номер',
-            dataIndex: 'number',
-            key: 'number',
+            dataIndex: 'key',
+            key: 'key',
             align: 'center'
         },
         {
             title: 'Оператор',
-            dataIndex: 'operator',
-            key: 'operator',
+            dataIndex: 'user_name',
+            key: 'user_name',
             align: 'center',
         },
         {
             title: 'Аудио запись',
-            dataIndex: 'record',
-            key: 'record',
+            dataIndex: 'url_rec',
+            key: 'url_rec',
             align: 'center',
             render: (value) => <audio controls src={value}/>
         },
-        {
-            title: 'Отсутсвие ошибок дежурного в процессе разговора',
-            dataIndex: 'noErrors',
-            key: 'noErrors',
-            align: 'center',
-        },
-        {
-            title: 'Логически правильно выстроен ответ',
-            dataIndex: 'correctAnswer',
-            key: 'correctAnswer',
-            align: 'center',
-        },
-        {
-            title: 'Достоверно предоставленная информация',
-            dataIndex: 'reliableInformation',
-            key: 'reliableInformation',
-            align: 'center',
-        },
-        {
-            title: 'Умение слушать',
-            dataIndex: 'listeningSkills',
-            key: 'listeningSkills',
-            align: 'center',
-        },
+        ...tableData.reduce((acc: any, item) => {
+            item.manual_evaluations.forEach(evaluation => {
+                const columnIndex = acc.findIndex((column: any) => column.title === evaluation.title);
+                if (columnIndex === -1) {
+                    acc.push({
+                        title: evaluation.title,
+                        align: 'center',
+                        dataIndex: `manual_evaluation_${evaluation.title}`,
+                        key: `manual_evaluation_${evaluation.title}`,
+                        render: (_: any, record: any) => {
+                            const matchingEvaluation = record.manual_evaluations.find((e: any) => e.title === evaluation.title);
+                            return matchingEvaluation ? matchingEvaluation.mark : null;
+                        },
+                    });
+                }
+            });
+            return acc;
+        }, []),
         {
             title: 'Детали',
             dataIndex: 'id',
             key: 'id',
             align: 'center',
-            render: () => <Button type={"primary"} ghost icon={<InfoCircleFilled/>} onClick={() => navigate(PATH.SUPERVISOR.ASSESSMENT)}/>
+            render: (value) => <Button type={"primary"} ghost icon={<InfoCircleFilled/>} onClick={() => navigate(`/evaluate/${value}`)}/>
         }
     ];
+
+
+    const newData = tableData.map(item => {
+        const evaluations = item.manual_evaluations.reduce((acc: any, evaluation) => {
+            acc[`manual_evaluation_${evaluation.title}`] = null;
+            return acc;
+        }, {});
+
+        return {
+            key: item.key,
+            id: item.id,
+            user_name: item.user_name,
+            url_rec: item.url_rec,
+            manual_evaluations: item.manual_evaluations,
+            ...evaluations,
+        };
+    });
+
+
     return (
         <Space>
             <Layout style={{width: '93vw', padding: '20px 0 60px 20px'}}>
@@ -195,7 +121,10 @@ const Favorites = () => {
                     border: '2px solid #d0d2d4',
                     borderTop: '0'
                 }}>
-                    <Table columns={columns} dataSource={data} pagination={false}/>
+                    <Table columns={columns} dataSource={newData} pagination={{
+                        pageSize: 10,
+                        defaultCurrent: 1
+                    }} loading={status === "loading"}/>
                 </Content>
             </Layout>
         </Space>

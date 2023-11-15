@@ -8,9 +8,11 @@ import {
     editAdministratorCallSettingsData,
     fetchAdministratorCallSettingsData
 } from "../../../s2-bll/b1-administrator/a4-administaror-call-settings-reducer/administratorCallSettings-reducer";
+import {useAuthCheck} from "../../../common/hooks/useAuthChek";
 
 const CallSettings = () => {
     const {good_calls, bad_calls} = useAppSelector(state => state.administratorCallSettingsData.data)
+
     const [goodCalls, setGoodCalls] = useState(0)
     const [badCalls, setBadCalls] = useState(0)
     const [sliderGoodCallsValueChanged, setSliderGoodCallsValueChanged] = useState(false)

@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {ChangeEvent, useState} from 'react';
 import {Button, Divider, Flex, Input, Layout, Menu} from 'antd';
 import {
     LogoutOutlined,
@@ -12,18 +12,37 @@ import s from './SupervisorMain.module.scss'
 import {useLocation, useNavigate} from "react-router-dom";
 import {useDispatch} from "react-redux";
 import {logout} from "../../../s2-bll/b1-auth/auth-reducer";
+import {useAppSelector} from "../../../s2-bll/store";
+import {useAuthCheck} from "../../../common/hooks/useAuthChek";
 
 const {Header, Sider, Content, Footer} = Layout;
 
-const SupervisorMain = ({children}: { children: React.ReactNode }) => {
+interface SupervisorMainType {
+    startDate?: string
+    endDate?: string
+    onChangeStartDate?: (event: ChangeEvent<HTMLInputElement>) => void
+    onChangeEndDate?: (event: ChangeEvent<HTMLInputElement>) => void
+    children: React.ReactNode
+}
+
+
+
+const SupervisorMain: React.FC<SupervisorMainType> = ({
+                                                          children,
+                                                          startDate,
+                                                          endDate,
+                                                          onChangeStartDate,
+                                                          onChangeEndDate
+                                                      }) => {
 
     const navigate = useNavigate()
     const location = useLocation()
 
     const [collapsed, setCollapsed] = useState(true);
+    const isAuth = useAppSelector(state => state.authData.isAuth)
+    useAuthCheck(isAuth)
 
     const dispatch = useDispatch<any>()
-
 
 
     const getMenuSelectedKey = () => {
@@ -56,36 +75,38 @@ const SupervisorMain = ({children}: { children: React.ReactNode }) => {
         dispatch(logout())
         navigate('/login')
     }
-debugger
 
     return (
         <Layout style={{minHeight: '100vh'}}>
-            <Sider trigger={null} theme={"dark"} collapsible collapsed={collapsed} style={{background: '#ffffff', boxShadow: '12px 0px 13px 0px rgba(34, 60, 80, 0.3)',}}
+            <Sider trigger={null} theme={"dark"} collapsible collapsed={collapsed}
+                   style={{background: '#ffffff', boxShadow: '12px 0px 13px 0px rgba(34, 60, 80, 0.3)',}}
                    className={s.sidebar}>
                 <div className="demo-logo-vertical"/>
                 <Menu theme={"light"} mode="inline" defaultSelectedKeys={[getMenuSelectedKey()]}
                       style={{background: '#ffffff'}}>
-                    <Menu.Item key="1" icon={<TeamOutlined />} onClick={onOperatorsListNavigate}>
+                    <Menu.Item key="1" icon={<TeamOutlined/>} onClick={onOperatorsListNavigate}>
                         Список операторов
                     </Menu.Item>
-                    <Menu.Item key="2" icon={<StarFilled />} onClick={onFavoritesNavigate}>
+                    <Menu.Item key="2" icon={<StarFilled/>} onClick={onFavoritesNavigate}>
                         Избранные аудио
                     </Menu.Item>
-                    <Menu.Item key="3" icon={<SearchOutlined />} onClick={onSearchNavigate}>
+                    <Menu.Item key="3" icon={<SearchOutlined/>} onClick={onSearchNavigate}>
                         Поиск
                     </Menu.Item>
                     <Divider style={{borderColor: '#ccd2d5'}}/>
-                    {location.pathname === "/operator-list" && <Menu.SubMenu key="submenu" title={'Настройки'} icon={<SettingFilled/>}>
-                        <Menu.Item key="submenu-item-1" disabled style={{paddingLeft: '10px'}}>
-                            <Input type={"date"} style={{width: '100%'}}/>
-                        </Menu.Item>
-                        <Menu.Item key="submenu-item-2" disabled style={{paddingLeft: '10px'}}>
-                            <Input type={"date"} style={{width: '100%'}}/>
-                        </Menu.Item>
-                        <Menu.Item key="submenu-item-3" disabled>
-                            <Flex justify={'flex-end'}><Button type={'primary'} style={{borderRadius: '3px'}}>Применить</Button></Flex>
-                        </Menu.Item>
-                    </Menu.SubMenu>}
+                    {location.pathname === "/operator-list" &&
+                        <Menu.SubMenu key="submenu" title={'Настройки'} icon={<SettingFilled/>}>
+                            <Menu.Item key="submenu-item-1" disabled style={{paddingLeft: '10px'}}>
+                                <Input value={startDate} type={"date"} style={{width: '100%'}} onChange={onChangeStartDate}/>
+                            </Menu.Item>
+                            <Menu.Item key="submenu-item-2" disabled style={{paddingLeft: '10px'}}>
+                                <Input value={endDate} type={"date"} style={{width: '100%'}} onChange={onChangeEndDate}/>
+                            </Menu.Item>
+                            <Menu.Item key="submenu-item-3" disabled>
+                                <Flex justify={'flex-end'}><Button type={'primary'}
+                                                                   style={{borderRadius: '3px'}}>Применить</Button></Flex>
+                            </Menu.Item>
+                        </Menu.SubMenu>}
                     <Menu.Item key="5" icon={<LogoutOutlined/>} onClick={onLogoutHandler}>
                         Выход
                     </Menu.Item>

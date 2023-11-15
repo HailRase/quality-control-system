@@ -13,10 +13,15 @@ import s from './AdministratorMain.module.scss'
 import {useLocation, useNavigate} from "react-router-dom";
 import {useDispatch} from "react-redux";
 import {logout} from "../../../s2-bll/b1-auth/auth-reducer";
+import {useAppSelector} from "../../../s2-bll/store";
+import {useAuthCheck} from "../../../common/hooks/useAuthChek";
 
 const {Header, Sider, Content, Footer} = Layout;
 
 const AdministratorMain = ({children}: { children: React.ReactNode }) => {
+
+    const isAuth = useAppSelector(state => state.authData.isAuth)
+    useAuthCheck(isAuth)
 
     const navigate = useNavigate()
     const location = useLocation()
@@ -24,7 +29,6 @@ const AdministratorMain = ({children}: { children: React.ReactNode }) => {
     const [collapsed, setCollapsed] = useState(true);
 
     const dispatch = useDispatch<any>()
-
 
 
     const getMenuSelectedKey = () => {

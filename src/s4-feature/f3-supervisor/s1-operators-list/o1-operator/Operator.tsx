@@ -1,12 +1,16 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import s from './Operator.module.scss'
-import {Button, Flex, Input, Layout, Space, Table} from "antd";
-import {FileExcelFilled, HistoryOutlined, PercentageOutlined, PhoneFilled} from "@ant-design/icons";
+import {Button, Flex, Input, Layout, Space, Spin, Table} from "antd";
+import {FileExcelFilled, HistoryOutlined, LoadingOutlined, PercentageOutlined, PhoneFilled} from "@ant-design/icons";
 import {ReactComponent as CrossedPhone} from "../../../../assets/crossed-phone.svg";
 import {Content, Footer, Header} from "antd/es/layout/layout";
 import {ColumnsType} from "antd/es/table";
 import {PATH} from "../../../../s1-main/routes/routes";
-import {useNavigate} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
+import {useDispatch} from "react-redux";
+import {fetchOperatorData} from "../../../../s2-bll/b2-supervisor/s3-operator-reducer/operator-reducer";
+import {useAppSelector} from "../../../../s2-bll/store";
+import moment from "moment";
 
 interface OperatorDataType {
     key: React.Key
@@ -15,85 +19,58 @@ interface OperatorDataType {
     time_created: string,
     post_marks: string,
     sum_marks: number,
-    is_cancelled: boolean
+    is_cancelled: boolean,
 }
 
-const Operator = () => {
+interface OperatorPropsType {
+    startDate: string
+    endDate: string
+}
+
+const Operator: React.FC<OperatorPropsType> = ({startDate, endDate}) => {
     const navigate = useNavigate()
-    const data: OperatorDataType[] = [
-        {
-            key: '1',
-            id: 1,
-            title: '1934679384769.234234',
-            post_marks: '0/4',
-            sum_marks: 4,
-            time_created: '2023-11-08T09:44:45.125Z',
-            is_cancelled: false
-        },
-        {
-            key: '2',
-            id: 2,
-            title: '1934679384769.234234',
-            post_marks: '0/4',
-            sum_marks: 4,
-            time_created: '2023-11-08T09:44:45.125Z',
-            is_cancelled: false
-        },
-        {
-            key: '3',
-            id: 3,
-            title: '1934679384769.234234',
-            post_marks: '0/4',
-            sum_marks: 4,
-            time_created: '2023-11-08T09:44:45.125Z',
-            is_cancelled: false
-        },
-        {
-            key: '4',
-            id: 5,
-            title: '1934679384769.234234',
-            post_marks: '0/4',
-            sum_marks: 4,
-            time_created: '2023-11-08T09:44:45.125Z',
-            is_cancelled: false
-        },
-        {
-            key: '6',
-            id: 6,
-            title: '1934679384769.234234',
-            post_marks: '0/4',
-            sum_marks: 4,
-            time_created: '2023-11-08T09:44:45.125Z',
-            is_cancelled: false
-        },
-        {
-            key: '7',
-            id: 7,
-            title: '1934679384769.234234',
-            post_marks: '0/4',
-            sum_marks: 4,
-            time_created: '2023-11-08T09:44:45.125Z',
-            is_cancelled: false
-        },
-        {
-            key: '8',
-            id: 8,
-            title: '1934679384769.234234',
-            post_marks: '0/4',
-            sum_marks: 4,
-            time_created: '2023-11-08T09:44:45.125Z',
-            is_cancelled: false
-        },
-        {
-            key: '9',
-            id: 9,
-            title: '1934679384769.234234',
-            post_marks: '0/4',
-            sum_marks: 4,
-            time_created: '2023-11-08T09:44:45.125Z',
-            is_cancelled: false
-        },
-    ]
+    const {userID} = useParams()
+    const dispatch = useDispatch<any>()
+    const [pageSize, setPageSize] = useState<number>(10)
+
+    const {
+        good_per_settings,
+        amount_good,
+        bad_per_settings,
+        amount_bad,
+        canceled_good,
+        canceled_bad,
+        all_good_recs,
+        all_bad_recs,
+        good_recs,
+        bad_recs
+    } = useAppSelector(state => state.supervisorOperatorData.data)
+    const status = useAppSelector(state => state.supervisorOperatorData.status)
+    const error = useAppSelector(state => state.supervisorOperatorData.errorMessage)
+
+
+    useEffect(() => {
+        userID && dispatch(fetchOperatorData(userID, startDate, endDate))
+    }, [])
+
+
+    const data: OperatorDataType[] = good_recs.map( (rec, index) => {
+        return {
+            key: index,
+            ...rec,
+            time_created: moment(rec.time_created).format('DD.MM.YYYY, HH:mm:ss'),
+            is_cancelled: rec.is_cancelled ? rec.is_cancelled : false,
+            is_good: true
+        }
+    }).concat(bad_recs.map((rec, index) => {
+        return {
+            key: index,
+            ...rec,
+            time_created: moment(rec.time_created).format('DD.MM.YYYY, HH:mm:ss'),
+            is_cancelled:rec.is_cancelled ? rec.is_cancelled : false,
+            is_good: false
+        }
+    }))
     const columns: ColumnsType<OperatorDataType> = [
         {
             title: 'Аудио',
@@ -107,7 +84,8 @@ const Operator = () => {
             dataIndex: 'id',
             key: 'id',
             align: 'center',
-            render: () => <Button type={"primary"} ghost icon={<HistoryOutlined/>} onClick={() => navigate(PATH.SUPERVISOR.HISTORY)}/>
+            render: (value) => <Button type={"primary"} ghost icon={<HistoryOutlined/>} style={{borderRadius: '3px'}}
+                                  onClick={() => navigate(`/history/${value}`)}/>
         },
         {
             title: 'Проставлено оценок',
@@ -122,17 +100,6 @@ const Operator = () => {
             key: 'sum_marks',
             align: 'center',
             sorter: (a: any, b: any) => a.sum_marks.length - b.sum_marks.length,
-            /*render: (value, record, index) => <Input
-                onFocus={() => {
-                    setStatusEditing(record.id)
-                    setEmail(value)
-                }}
-                onBlur={() => {
-                    onSaveEmailHandler(record.id)
-                }}
-                value={statusEditing === record.id ? email : value}
-                onChange={onChangeEmailHandler}
-            />*/
         },
         {
             title: 'Дата звонка',
@@ -146,20 +113,23 @@ const Operator = () => {
             dataIndex: 'is_cancelled',
             key: 'is_cancelled',
             align: 'center',
+            render: (value) => <span>{value ? "Да" : "Нет"}</span>
         },
         {
             title: 'Оценивание',
             dataIndex: 'id',
             key: 'id',
             align: 'center',
-            render: () => <Button onClick={() => navigate(PATH.SUPERVISOR.ASSESSMENT)} type={'primary'} ghost>Перейти к
-                оцениваню</Button>
+            render: (value) => <Button style={{borderRadius: '3px'}} onClick={() => navigate(`/evaluate/${value}`)} type={'primary'} ghost>
+                Перейти к оцениваню
+            </Button>
         }
     ];
 
+
     return (
         <Space style={{width: '100%'}}>
-            <Flex vertical style={{width: '94vw', padding: '30px 20px'}}>
+            <Flex vertical style={{width: '93vw', padding: '30px 5px 30px 20px'}}>
                 <Layout style={{width: '100%'}}>
                     <Flex vertical gap={30}>
                         <Flex gap={20} align={"center"}>
@@ -181,7 +151,9 @@ const Operator = () => {
                                 </Flex>
                                 <Flex vertical align={"flex-start"} justify={"flex-start"} style={{fontSize: '16px'}}>
                                     <span>Отобрано хороших</span>
-                                    <span><b>1%</b></span>
+                                    {status === "loading"
+                                        ? <Spin indicator={<LoadingOutlined style={{fontSize: 24, color: '#757575'}} spin/>}/>
+                                        : <span><b>{good_per_settings}%</b></span>}
                                 </Flex>
                             </Flex>
                             <Flex gap={10}
@@ -202,7 +174,9 @@ const Operator = () => {
                                 </Flex>
                                 <Flex vertical align={"flex-start"} justify={"flex-start"} style={{fontSize: '16px'}}>
                                     <span>Количество отобранных</span>
-                                    <span><b>0</b></span>
+                                    {status === "loading"
+                                        ? <Spin indicator={<LoadingOutlined style={{fontSize: 24, color: '#757575'}} spin/>}/>
+                                        : <span><b>{amount_good}</b></span>}
                                 </Flex>
                             </Flex>
                             <Flex gap={10}
@@ -223,7 +197,9 @@ const Operator = () => {
                                 </Flex>
                                 <Flex vertical align={"flex-start"} justify={"flex-start"} style={{fontSize: '16px'}}>
                                     <span>Отобрано плохих</span>
-                                    <span><b>20%</b></span>
+                                    {status === "loading"
+                                        ? <Spin indicator={<LoadingOutlined style={{fontSize: 24, color: '#757575'}} spin/>}/>
+                                        : <span><b>{bad_per_settings}%</b></span>}
                                 </Flex>
                             </Flex>
                             <Flex gap={10}
@@ -244,7 +220,9 @@ const Operator = () => {
                                 </Flex>
                                 <Flex vertical align={"flex-start"} justify={"flex-start"} style={{fontSize: '16px'}}>
                                     <span>Количество отобранных</span>
-                                    <span><b>1</b></span>
+                                    {status === "loading"
+                                        ? <Spin indicator={<LoadingOutlined style={{fontSize: 24, color: '#757575'}} spin/>}/>
+                                        : <span><b>{amount_bad}</b></span>}
                                 </Flex>
                             </Flex>
                         </Flex>
@@ -267,7 +245,9 @@ const Operator = () => {
                                 </Flex>
                                 <Flex vertical align={"flex-start"} justify={"flex-start"} style={{fontSize: '16px'}}>
                                     <span>Анулировано хороших</span>
-                                    <span><b>0</b></span>
+                                    {status === "loading"
+                                        ? <Spin indicator={<LoadingOutlined style={{fontSize: 24, color: '#757575'}} spin/>}/>
+                                        : <span><b>{canceled_good}</b></span>}
                                 </Flex>
                             </Flex>
                             <Flex gap={10}
@@ -288,7 +268,9 @@ const Operator = () => {
                                 </Flex>
                                 <Flex vertical align={"flex-start"} justify={"flex-start"} style={{fontSize: '16px'}}>
                                     <span>Анулировано плохих</span>
-                                    <span><b>0</b></span>
+                                    {status === "loading"
+                                        ? <Spin indicator={<LoadingOutlined style={{fontSize: 24, color: '#757575'}} spin/>}/>
+                                        : <span><b>{canceled_bad}</b></span>}
                                 </Flex>
                             </Flex>
                             <Flex gap={10}
@@ -309,7 +291,9 @@ const Operator = () => {
                                 </Flex>
                                 <Flex vertical align={"flex-start"} justify={"flex-start"} style={{fontSize: '16px'}}>
                                     <span>Всего хороших</span>
-                                    <span><b>5</b></span>
+                                    {status === "loading"
+                                        ? <Spin indicator={<LoadingOutlined style={{fontSize: 24, color: '#757575'}} spin/>}/>
+                                        : <span><b>{all_good_recs}</b></span>}
                                 </Flex>
                             </Flex>
                             <Flex gap={10}
@@ -330,7 +314,9 @@ const Operator = () => {
                                 </Flex>
                                 <Flex vertical align={"flex-start"} justify={"flex-start"} style={{fontSize: '16px'}}>
                                     <span>Всего плохих</span>
-                                    <span><b>6</b></span>
+                                    {status === "loading"
+                                        ? <Spin indicator={<LoadingOutlined style={{fontSize: 24, color: '#757575'}} spin/>}/>
+                                        : <span><b>{all_bad_recs}</b></span>}
                                 </Flex>
                             </Flex>
                         </Flex>
@@ -349,12 +335,14 @@ const Operator = () => {
                             <div>Баранчук Светлана Григорьевна</div>
                             <Flex justify={'space-between'} align={'center'}>
                                 <span style={{marginRight: '5px'}}>Выявленных звонков: </span>
-                                <Input value={0} min={0} type={'number'} style={{width: '70px'}}/>
+                                <Input value={0} min={0} type={'number'} style={{width: '70px'}} />
                             </Flex>
                             <div>Премия: 0%</div>
                             <Flex>
-                                <Button type={'primary'} ghost style={{borderRadius: '3px', marginRight: '15px'}}>Вернуться
-                                    в отчёт</Button>
+                                <Button type={'primary'} ghost style={{borderRadius: '3px', marginRight: '15px'}}
+                                        onClick={() => navigate(-1)}>
+                                    Вернуться в отчёт
+                                </Button>
                                 <Button type={'primary'} ghost icon={<FileExcelFilled/>} style={{borderRadius: '3px'}}/>
                             </Flex>
                         </Flex>
@@ -372,12 +360,15 @@ const Operator = () => {
                             <Flex justify={'space-between'} align={'center'} style={{marginBottom: '30px'}}>
                                 <Flex align={'center'}>
                                     <span style={{marginRight: '5px'}}>Показать</span>
-                                    <Input value={10} min={1} type={'number'} style={{width: '70px'}}/>
+                                    <Input value={pageSize} min={1} type={'number'} style={{width: '70px'}} onChange={(event) => setPageSize(+event.currentTarget.value)}/>
                                     <span style={{marginLeft: '5px'}}>записей</span>
                                 </Flex>
                                 <Flex align={'center'}><span style={{marginRight: '5px'}}>Поиск:</span> <Input.Search/></Flex>
                             </Flex>
-                            <Table columns={columns} dataSource={data}/>
+                            <Table columns={columns} dataSource={data} pagination={{
+                                defaultCurrent: 1,
+                                pageSize
+                            }}/>
                         </Flex>
                     </Content>
                     <Footer>

@@ -1,14 +1,28 @@
 import React, {useState} from 'react';
-import s from './Assessment.module.scss'
 import {Button, Checkbox, Collapse, Flex, Input, Layout, Space, Switch} from "antd";
 import {LeftCircleFilled, MinusOutlined, PlusOutlined, RightCircleFilled, StarFilled} from "@ant-design/icons";
-import {Content, Footer, Header} from "antd/es/layout/layout";
+import {useDispatch} from "react-redux";
+import {useParams} from "react-router-dom";
+import {
+    addRecordToFavorites,
+    deleteRecordFromFavorites
+} from "../../../s2-bll/b2-supervisor/s7-favorites-reducer/favorites-reducer";
 
 const Assessment = () => {
 
     const [commentVisible, setCommentVisible] = useState<boolean>(false)
     const [transCallVisible, setTransCallVisible] = useState<boolean>(false)
+    const {recordID} = useParams()
     const [added, setAdded] = useState<boolean>(false)
+    const dispatch = useDispatch<any>()
+    const onDeleteRecordFromFavoritesHandler = () => {
+        recordID && dispatch(deleteRecordFromFavorites(+recordID))
+        setAdded(false)
+    }
+    const onAddRecordToFavoritesHandler = () => {
+        recordID && dispatch(addRecordToFavorites(+recordID))
+        setAdded(true)
+    }
 
     return (
         <Space style={{width: '100%'}}>
@@ -17,9 +31,9 @@ const Assessment = () => {
                       style={{width: '100%', height: '10vh', marginBottom: '10px'}}>
                     {added
                         ? <StarFilled style={{fontSize: '32px', color: '#ffc600', cursor: 'pointer'}}
-                                      onClick={() => setAdded(false)}/>
+                                      onClick={onDeleteRecordFromFavoritesHandler}/>
                         : <StarFilled style={{fontSize: '32px', color: '#6c757e', cursor: 'pointer'}}
-                                      onClick={() => setAdded(true)}/>}
+                                      onClick={onAddRecordToFavoritesHandler}/>}
                     <Flex align={'center'} gap={10}>
                         <Button type={'text'} icon={<LeftCircleFilled/>}/>
                         <span style={{fontSize: '16px', marginBottom: '5px'}}>Аудио №5357747</span>
@@ -138,7 +152,7 @@ const Assessment = () => {
                                                     <Flex vertical align={"center"} gap={17}
                                                           style={{fontSize: '12px', color: '#15cc06'}}>
                                                         <div>0/0</div>
-                                                        <div>0</div>
+                                                        <div>0</div>2
                                                         <div>0</div>
                                                         <div>03:00:54:88</div>
                                                     </Flex>

@@ -1,6 +1,5 @@
 import React, {ChangeEvent, useEffect, useState} from 'react';
-import s from './AssessmentCriteria.module.scss'
-import {Button, Flex, Input, InputNumber, Layout, Popconfirm, Space, notification} from "antd";
+import {Button, Flex, Input, InputNumber, Layout, notification, Popconfirm, Space} from "antd";
 import {Content, Header} from "antd/es/layout/layout";
 import {DeleteTwoTone, EditTwoTone, SaveTwoTone} from "@ant-design/icons";
 import {useDispatch} from "react-redux";
@@ -8,10 +7,10 @@ import {
     addNewAdministratorAssessmentCriteriaData,
     deleteNewAdministratorAssessmentCriteriaData,
     editNewAdministratorAssessmentCriteriaData,
-    fetchAdministratorAssessmentCriteriaData, setAdministratorAssessmentCriteriaDataStatusError
+    fetchAdministratorAssessmentCriteriaData,
+    setAdministratorAssessmentCriteriaDataStatusError
 } from "../../../s2-bll/b1-administrator/a2-administrator-assessment-criteria-reducer/administratorAssessmentCriteria-reducer";
 import {useAppSelector} from "../../../s2-bll/store";
-import {NotificationPlacement} from "antd/es/notification/interface";
 
 interface ParametersType {
     name: string,
@@ -43,6 +42,7 @@ const AssessmentCriteria = () => {
     const {items, page, pages, total, size} = useAppSelector(state => state.administratorAssessmentCriteriaData.data)
     const status = useAppSelector(state => state.administratorAssessmentCriteriaData.status)
     const errorMessage = useAppSelector(state => state.administratorAssessmentCriteriaData.errorMessage)
+
 
     const dispatch = useDispatch<any>()
 
@@ -113,6 +113,8 @@ const AssessmentCriteria = () => {
             style: type === "success" ? {backgroundColor: 'rgba(142,248,108,0.62)'} : {backgroundColor: 'rgba(250,117,117,0.38)'}
         });
     };
+
+
 
     return (
         <Space style={{width: '100%'}}>

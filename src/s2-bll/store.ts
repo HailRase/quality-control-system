@@ -18,6 +18,16 @@ import {
 } from "./b1-administrator/a5-administrator-supervisor-reducer/administratorSupervisor-reducer";
 import {authReducer} from "./b1-auth/auth-reducer";
 import {initializeReducer} from "./b0-initialize-reducer/initialize-reducer";
+import {
+    OperatorsListStatisticsReducer
+} from "./b2-supervisor/s1-operators-list-statistics-reducer/operatorsLlistStatistics-reducer";
+import {operatorsListReducer} from "./b2-supervisor/s2-operators-list-reducer/operatorsList-reducer";
+import {operatorReducer} from "./b2-supervisor/s3-operator-reducer/operator-reducer";
+import {favoritesReducer} from "./b2-supervisor/s7-favorites-reducer/favorites-reducer";
+import {historyReducer} from "./b2-supervisor/s8-history-reducer/history-reducer";
+import {searchReducer} from "./b2-supervisor/s4-search-reducer/search-reducer";
+import {searchQueryReducer} from "./b2-supervisor/s4-search-reducer/search-query-reducer";
+import {searchQueryParamsReducer} from "./b2-supervisor/s4-search-reducer/search-query-params-reducer";
 
 
 const rootReducer = combineReducers({
@@ -28,6 +38,14 @@ const rootReducer = combineReducers({
     administratorDictionariesData: administratorDictionariesReducer,
     administratorCallSettingsData: administratorCallSettingsReducer,
     administratorSupervisorData: administratorSupervisorReducer,
+    supervisorOperatorsListStatisticsData: OperatorsListStatisticsReducer,
+    supervisorOperatorsListData: operatorsListReducer,
+    supervisorOperatorData: operatorReducer,
+    supervisorFavoritesData: favoritesReducer,
+    supervisorHistoryData: historyReducer,
+    supervisorSearchData: searchReducer,
+    supervisorSearchQueryData: searchQueryReducer,
+    supervisorSearchQueryParamsData: searchQueryParamsReducer,
 })
 
 const store = legacy_createStore(rootReducer, applyMiddleware(thunkMiddleware))

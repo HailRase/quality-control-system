@@ -55,6 +55,7 @@ const Dictionaries = () => {
     const status = useAppSelector(state => state.administratorDictionariesData.status)
     const errorMessage = useAppSelector(state => state.administratorDictionariesData.errorMessage)
 
+
     const [title, setTitle] = useState<string>('')
     const [modelTitle, setModelTitle] = useState<string>('')
     const [color, setColor] = useState<string>('#1E08EE')

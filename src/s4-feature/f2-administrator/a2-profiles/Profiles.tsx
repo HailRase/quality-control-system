@@ -12,6 +12,7 @@ import {useAppSelector} from "../../../s2-bll/store";
 import {useDispatch} from "react-redux";
 import Search from "antd/es/input/Search";
 import {useNavigate} from "react-router-dom";
+import {useAuthCheck} from "../../../common/hooks/useAuthChek";
 
 interface DataType {
     key: React.Key
@@ -32,7 +33,6 @@ const Profiles = () => {
     const [statusEditing, setStatusEditing] = useState<null | string>(null)
 
     const {items, total, size, page, pages} = useAppSelector(state => state.administratorProfilesData.data)
-    const isAuth = useAppSelector(state => state.authData.isAuth)
     const status = useAppSelector<StatusType>(state => state.administratorProfilesData.status)
     const errorMessage = useAppSelector(state => state.administratorProfilesData.errorMessage)
 
@@ -140,9 +140,6 @@ const Profiles = () => {
             style: type === "success" ? {backgroundColor: 'rgba(142,248,108,0.62)'} : {backgroundColor: 'rgba(250,117,117,0.38)'}
         });
     };
-    if (!isAuth) {
-        navigate('/login')
-    }
 
     return (
         <Space style={{width: '100%'}}>

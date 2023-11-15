@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {ChangeEvent, useEffect, useState} from 'react';
 import s from './App.module.scss';
 import {Navigate, Route, Routes, useNavigate} from "react-router-dom";
 import Login from "../s4-feature/f1-login/Login";
@@ -20,13 +20,19 @@ import Assessment from "../s4-feature/f3-supervisor/s2-assessment/Assessment";
 import Favorites from "../s4-feature/f3-supervisor/s3-favorites/Favorites";
 import Search from "../s4-feature/f3-supervisor/s4-search/Search";
 import History from "../s4-feature/f3-supervisor/s5-history/History";
+import moment from "moment";
+import {useAuthCheck} from "../common/hooks/useAuthChek";
+import SearchQuery from "../s4-feature/f3-supervisor/s4-search/s1-search-query/SearchQuery";
 
-export const  App = () => {
+export const App = () => {
     const initialized = useAppSelector(state => state.initializeData.initialized)
+    const [startDate, setStartDate] = useState<string>(moment().subtract(1, 'days').format('YYYY-MM-DD'))
+    const [endDate, setEndDate] = useState<string>(moment().format('YYYY-MM-DD'))
     const navigate = useNavigate()
     const dispatch = useDispatch<any>()
     const role = useAppSelector(state => state.authData.data.role)
     const isAuth = useAppSelector(state => state.authData.isAuth)
+    useAuthCheck(isAuth)
 
     useEffect(() => {
         dispatch(initialize())
@@ -36,27 +42,54 @@ export const  App = () => {
         return <CSpin/>
     }
 
+    const onChangeStartDate = (event: ChangeEvent<HTMLInputElement>) => {
+        setStartDate(event.currentTarget.value)
+    }
+
+    const onChangeEndDate = (event: ChangeEvent<HTMLInputElement>) => {
+        setEndDate(event.currentTarget.value)
+    }
+
     return (
         <div className={s.container}>
             {role === 'Администратор' ?
                 <Routes>
                     <Route path={'/'} element={<Navigate to={PATH.ADMINISTRATOR.PROFILES}/>}/>
-                    <Route path={PATH.ADMINISTRATOR.PROFILES} element={<AdministratorMain><Profiles/></AdministratorMain>}/>
+                    <Route path={PATH.ADMINISTRATOR.PROFILES}
+                           element={<AdministratorMain><Profiles/></AdministratorMain>}/>
                     <Route path={PATH.ADMINISTRATOR.ASSESSMENT_CRITERIA}
                            element={<AdministratorMain><AssessmentCriteria/></AdministratorMain>}/>
-                    <Route path={PATH.ADMINISTRATOR.DICTIONARIES} element={<AdministratorMain><Dictionaries/></AdministratorMain>}/>
-                    <Route path={PATH.ADMINISTRATOR.CALL_SETTINGS} element={<AdministratorMain><CallSettings/></AdministratorMain>}/>
-                    <Route path={PATH.ADMINISTRATOR.SUPERVISORS} element={<AdministratorMain><Supervisors/></AdministratorMain>}/>
+                    <Route path={PATH.ADMINISTRATOR.DICTIONARIES}
+                           element={<AdministratorMain><Dictionaries/></AdministratorMain>}/>
+                    <Route path={PATH.ADMINISTRATOR.CALL_SETTINGS}
+                           element={<AdministratorMain><CallSettings/></AdministratorMain>}/>
+                    <Route path={PATH.ADMINISTRATOR.SUPERVISORS}
+                           element={<AdministratorMain><Supervisors/></AdministratorMain>}/>
                     <Route path={PATH.AUTH.LOGIN} element={<Login/>}/>
                 </Routes>
-                :  role === "Супервизор"
+                : role === "Супервизор"
                     ? <Routes>
                         <Route path={'/'} element={<Navigate to={PATH.SUPERVISOR.OPERATOR_LIST}/>}/>
-                        <Route path={PATH.SUPERVISOR.OPERATOR_LIST} element={<SupervisorMain><OperatorsList/></SupervisorMain>}/>
-                        <Route path={PATH.SUPERVISOR.OPERATOR} element={<SupervisorMain><Operator/></SupervisorMain>}/>
-                        <Route path={PATH.SUPERVISOR.ASSESSMENT} element={<SupervisorMain><Assessment/></SupervisorMain>}/>
-                        <Route path={PATH.SUPERVISOR.FAVORITES} element={<SupervisorMain><Favorites/></SupervisorMain>}/>
+                        <Route path={PATH.SUPERVISOR.OPERATOR_LIST} element={
+                            <SupervisorMain
+                                startDate={startDate}
+                                endDate={endDate}
+                                onChangeStartDate={onChangeStartDate}
+                                onChangeEndDate={onChangeEndDate}>
+                                <OperatorsList startDate={startDate} endDate={endDate}/>
+                            </SupervisorMain>
+                        }/>
+                        <Route path={PATH.SUPERVISOR.OPERATOR} element={
+                            <SupervisorMain>
+                                <Operator startDate={startDate} endDate={endDate}/>
+                            </SupervisorMain>
+                        }/>
+                        <Route path={PATH.SUPERVISOR.ASSESSMENT}
+                               element={<SupervisorMain><Assessment/></SupervisorMain>}/>
+                        <Route path={PATH.SUPERVISOR.FAVORITES}
+                               element={<SupervisorMain><Favorites/></SupervisorMain>}/>
                         <Route path={PATH.SUPERVISOR.SEARCH} element={<SupervisorMain><Search/></SupervisorMain>}/>
+                        <Route path={PATH.SUPERVISOR.SEARCH_QUERY} element={<SupervisorMain><SearchQuery/></SupervisorMain>}/>
                         <Route path={PATH.SUPERVISOR.HISTORY} element={<SupervisorMain><History/></SupervisorMain>}/>
                         <Route path={PATH.AUTH.LOGIN} element={<Login/>}/>
                     </Routes>
