@@ -1,0 +1,35 @@
+
+.collapseContainer {
+  width: 100%;
+  padding-right: 0;
+  .transContainer {
+    padding: 0px 20px;
+    /* Стили для скроллбара */
+    &::-webkit-scrollbar {
+      width: 8px; /* Ширина скроллбара */
+    }
+
+    /* Стили для трека скроллбара */
+    &::-webkit-scrollbar-track {
+      background-color: #f1f1f1; /* Цвет трека скроллбара */
+    }
+
+    /* Стили для ползунка скроллбара */
+    &::-webkit-scrollbar-thumb {
+      background-color: #d1d5dd; /* Цвет ползунка скроллбара */
+      border-radius: 4px; /* Закругление углов ползунка скроллбара */
+    }
+
+    /* Стиль при наведении на ползунок скроллбара */
+    &::-webkit-scrollbar-thumb:hover {
+      background-color: #b1b4b9; /* Цвет ползунка при наведении */
+    }
+  }
+
+}
+
+
+// Переопределение стилей Collapse.Panel
+.ant-collapse-content-box {
+  padding: 0; /* Убираем паддинги */
+}

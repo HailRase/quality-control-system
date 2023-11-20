@@ -64,7 +64,7 @@ const initialState: InitState = {
                 time_created: "",
                 post_marks: "",
                 sum_marks: 0,
-                is_cancelled: null
+                is_cancelled: null,
             },
 
         ],
@@ -75,7 +75,7 @@ const initialState: InitState = {
                 time_created: "2023-11-09T08:53:53",
                 post_marks: "2/3",
                 sum_marks: 28,
-                is_cancelled: false
+                is_cancelled: false,
             }
         ]
     },
@@ -128,10 +128,10 @@ export const setOperatorDataStatusError = (errorMessage: string) => {
     } as const
 }
 
-export const fetchOperatorData = (id: string, startData: string, endData: string): DataThunkAction => async (dispatch) => {
+export const fetchOperatorData = (id: string, startData: string, endData: string, query?: string): DataThunkAction => async (dispatch) => {
     try {
         dispatch(setOperatorDataStatus("loading"))
-        const {data} = await supervisorOperatorsListAPI.getSupervisorOperatorData(id, startData, endData)
+        const {data} = await supervisorOperatorsListAPI.getSupervisorOperatorData(id, startData, endData, query)
         dispatch(setOperatorData(data))
         dispatch(setOperatorDataStatus("loaded"))
     } catch (e: any) {

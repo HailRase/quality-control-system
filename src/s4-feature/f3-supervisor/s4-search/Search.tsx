@@ -6,7 +6,7 @@ import {ColumnsType} from "antd/es/table";
 import {fetchSearchData} from "../../../s2-bll/b2-supervisor/s4-search-reducer/search-reducer";
 import {useAppSelector} from "../../../s2-bll/store";
 import {useNavigate} from "react-router-dom";
-import {setSearchQueryParamsData} from "../../../s2-bll/b2-supervisor/s4-search-reducer/search-query-params-reducer";
+import {setSearchQueryParamsData} from "../../../s2-bll/b2-supervisor/s4-search-reducer/searchQueryParams-reducer";
 
 
 type DataType = {

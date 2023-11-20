@@ -29,7 +29,7 @@ type InitialStateItemType = {
     count_marks: number | null
 }
 export type InitialStateDataType = {
-    items: InitialStateItemType[]
+    items: InitialStateItemType[] | []
     total: number,
     page: number,
     size: number,
@@ -46,17 +46,7 @@ type InitState = {
 
 const initialState: InitState = {
     data: {
-        items: [
-            {
-                id: '',
-                name: '',
-                all_records: 0,
-                bad_records: 0,
-                good_records: 0,
-                estimate_records: 0,
-                count_marks: 0
-            }
-        ],
+        items: [],
         total: 0,
         page: 1,
         size: 10,
@@ -111,10 +101,10 @@ export const setOperatorsListDataStatusError = (errorMessage: string) => {
     } as const
 }
 
-export const fetchOperatorsListData = (startData: string, endData: string, currentPage: number, pageSize: number): DataThunkAction => async (dispatch) => {
+export const fetchOperatorsListData = (startData: string, endData: string, currentPage: number, pageSize: number, query?: string): DataThunkAction => async (dispatch) => {
     try {
         dispatch(setOperatorsListDataStatus("loading"))
-        const {data} = await supervisorOperatorsListAPI.getSupervisorOperatorsListData(startData, endData, currentPage, pageSize)
+        const {data} = await supervisorOperatorsListAPI.getSupervisorOperatorsListData(startData, endData, currentPage, pageSize, query)
         dispatch(setOperatorsListData(data))
         dispatch(setOperatorsListDataStatus("loaded"))
     } catch (e: any) {

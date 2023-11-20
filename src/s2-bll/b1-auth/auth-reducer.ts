@@ -106,7 +106,6 @@ export const setAuthDataStatusError = (errorMessage: string) => {
 export const login = (username: string, password: string): DataThunkAction => async (dispatch) => {
     try {
         dispatch(setAuthDataStatus("loading"))
-        debugger
         const {data, status} = await authAPI.login(username, password)
         status === 200
             ? dispatch(setIsAuthData(true))

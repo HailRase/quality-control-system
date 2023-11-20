@@ -26,6 +26,7 @@ type InitialStateItemType = {
     common_mark: number
     sum_marks: number
     is_cancelled: boolean
+    is_bad: boolean
 }
 export type InitialStateDataType = {
     items: InitialStateItemType[]
@@ -53,7 +54,8 @@ const initialState: InitState = {
                 post_marks: '',
                 common_mark: 0,
                 sum_marks: 0,
-                is_cancelled: false
+                is_cancelled: false,
+                is_bad: false
             }
         ],
         total: 0,

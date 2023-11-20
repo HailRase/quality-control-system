@@ -1,5 +1,24 @@
 .custom-style {
     background-color: green;
-
+    padding: 0 2px;
     border: 1px solid black;
+}
+
+.bad-row {
+    background-color: #fde4e4;
+}
+.good-row {
+    background-color: #5b9855;
+}
+.bad-row:hover {
+    background-color: #fde4e4;
+}
+.good-row:hover {
+    background-color: #5b9855;
+}
+#comment-assessment .ant-collapse-content-box {
+    padding: 0;
+}
+#call-transcription .ant-collapse-content-box {
+    padding: 0 0 0 10px
 }

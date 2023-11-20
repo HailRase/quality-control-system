@@ -1,4 +1,4 @@
-import React, {ChangeEvent, useEffect, useState} from 'react';
+import React, {useEffect} from 'react';
 import s from './App.module.scss';
 import {Navigate, Route, Routes, useNavigate} from "react-router-dom";
 import Login from "../s4-feature/f1-login/Login";
@@ -26,8 +26,8 @@ import SearchQuery from "../s4-feature/f3-supervisor/s4-search/s1-search-query/S
 
 export const App = () => {
     const initialized = useAppSelector(state => state.initializeData.initialized)
-    const [startDate, setStartDate] = useState<string>(moment().subtract(1, 'days').format('YYYY-MM-DD'))
-    const [endDate, setEndDate] = useState<string>(moment().format('YYYY-MM-DD'))
+    moment().subtract(1, 'days').format('YYYY-MM-DD')
+    moment().format('YYYY-MM-DD')
     const navigate = useNavigate()
     const dispatch = useDispatch<any>()
     const role = useAppSelector(state => state.authData.data.role)
@@ -39,16 +39,9 @@ export const App = () => {
     }, [])
 
     if (!initialized) {
-        return <CSpin/>
+        return <CSpin title/>
     }
 
-    const onChangeStartDate = (event: ChangeEvent<HTMLInputElement>) => {
-        setStartDate(event.currentTarget.value)
-    }
-
-    const onChangeEndDate = (event: ChangeEvent<HTMLInputElement>) => {
-        setEndDate(event.currentTarget.value)
-    }
 
     return (
         <div className={s.container}>
@@ -70,20 +63,8 @@ export const App = () => {
                 : role === "Супервизор"
                     ? <Routes>
                         <Route path={'/'} element={<Navigate to={PATH.SUPERVISOR.OPERATOR_LIST}/>}/>
-                        <Route path={PATH.SUPERVISOR.OPERATOR_LIST} element={
-                            <SupervisorMain
-                                startDate={startDate}
-                                endDate={endDate}
-                                onChangeStartDate={onChangeStartDate}
-                                onChangeEndDate={onChangeEndDate}>
-                                <OperatorsList startDate={startDate} endDate={endDate}/>
-                            </SupervisorMain>
-                        }/>
-                        <Route path={PATH.SUPERVISOR.OPERATOR} element={
-                            <SupervisorMain>
-                                <Operator startDate={startDate} endDate={endDate}/>
-                            </SupervisorMain>
-                        }/>
+                        <Route path={PATH.SUPERVISOR.OPERATOR_LIST} element={<SupervisorMain><OperatorsList/></SupervisorMain>}/>
+                        <Route path={PATH.SUPERVISOR.OPERATOR} element={<SupervisorMain><Operator/></SupervisorMain>}/>
                         <Route path={PATH.SUPERVISOR.ASSESSMENT}
                                element={<SupervisorMain><Assessment/></SupervisorMain>}/>
                         <Route path={PATH.SUPERVISOR.FAVORITES}

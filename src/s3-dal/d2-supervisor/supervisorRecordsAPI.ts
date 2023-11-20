@@ -1,8 +1,8 @@
 import {instance} from "../instance";
 
 export const supervisorRecordsAPI = {
-    getSupervisorRecordsDetailsData(id: number) {
-        return instance.get(`records/${id}/details`)
+    getSupervisorOperatorRecordDetailsData(recordID: number) {
+        return instance.get(`records/${recordID}/details`)
     },
    /* getSupervisorOperatorsListData(startDate: string, endDate: string, page: number, size: number) {
         return instance.get(`operators/?time_created__gte=${startDate}&time_created__lte=${endDate}&page=${page}&size=${size}`)

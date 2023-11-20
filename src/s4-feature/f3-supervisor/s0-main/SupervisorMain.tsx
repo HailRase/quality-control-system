@@ -14,26 +14,24 @@ import {useDispatch} from "react-redux";
 import {logout} from "../../../s2-bll/b1-auth/auth-reducer";
 import {useAppSelector} from "../../../s2-bll/store";
 import {useAuthCheck} from "../../../common/hooks/useAuthChek";
+import {
+    setOperatorsListDateData
+} from "../../../s2-bll/b2-supervisor/s2-operators-list-reducer/operatorListDate-reducer";
 
 const {Header, Sider, Content, Footer} = Layout;
 
 interface SupervisorMainType {
-    startDate?: string
-    endDate?: string
-    onChangeStartDate?: (event: ChangeEvent<HTMLInputElement>) => void
-    onChangeEndDate?: (event: ChangeEvent<HTMLInputElement>) => void
     children: React.ReactNode
 }
 
 
+const SupervisorMain: React.FC<SupervisorMainType> = ({children}) => {
 
-const SupervisorMain: React.FC<SupervisorMainType> = ({
-                                                          children,
-                                                          startDate,
-                                                          endDate,
-                                                          onChangeStartDate,
-                                                          onChangeEndDate
-                                                      }) => {
+    const {startPeriod, endPeriod} = useAppSelector(state => state.supervisorOperatorsListDateData.data)
+
+    const [startPeriodLocal, setStartPeriodLocal] = useState<string>(startPeriod)
+    const [endPeriodLocal, setEndPeriodLocal] = useState<string>(endPeriod)
+
 
     const navigate = useNavigate()
     const location = useLocation()
@@ -44,6 +42,16 @@ const SupervisorMain: React.FC<SupervisorMainType> = ({
 
     const dispatch = useDispatch<any>()
 
+    const onSetOperatorListDateHandler = () => {
+        dispatch(setOperatorsListDateData({startPeriod: startPeriodLocal, endPeriod: endPeriodLocal}))
+    }
+
+    const onChangeStartPeriodHandler = (e: ChangeEvent<HTMLInputElement>) => {
+        setStartPeriodLocal(e.currentTarget.value)
+    }
+    const onChangeEndPeriodHandler = (e: ChangeEvent<HTMLInputElement>) => {
+        setEndPeriodLocal(e.currentTarget.value)
+    }
 
     const getMenuSelectedKey = () => {
         if (location.pathname === '/operators-list') {
@@ -97,14 +105,21 @@ const SupervisorMain: React.FC<SupervisorMainType> = ({
                     {location.pathname === "/operator-list" &&
                         <Menu.SubMenu key="submenu" title={'Настройки'} icon={<SettingFilled/>}>
                             <Menu.Item key="submenu-item-1" disabled style={{paddingLeft: '10px'}}>
-                                <Input value={startDate} type={"date"} style={{width: '100%'}} onChange={onChangeStartDate}/>
+                                <Input value={startPeriodLocal} type={"date"} style={{width: '100%'}}
+                                       onChange={onChangeStartPeriodHandler}/>
                             </Menu.Item>
                             <Menu.Item key="submenu-item-2" disabled style={{paddingLeft: '10px'}}>
-                                <Input value={endDate} type={"date"} style={{width: '100%'}} onChange={onChangeEndDate}/>
+                                <Input value={endPeriodLocal} type={"date"} style={{width: '100%'}}
+                                       onChange={onChangeEndPeriodHandler}/>
                             </Menu.Item>
                             <Menu.Item key="submenu-item-3" disabled>
-                                <Flex justify={'flex-end'}><Button type={'primary'}
-                                                                   style={{borderRadius: '3px'}}>Применить</Button></Flex>
+                                <Flex justify={'flex-end'}>
+                                    <Button type={'primary'}
+                                            onClick={onSetOperatorListDateHandler}
+                                            style={{borderRadius: '3px'}}>
+                                        Применить
+                                    </Button>
+                                </Flex>
                             </Menu.Item>
                         </Menu.SubMenu>}
                     <Menu.Item key="5" icon={<LogoutOutlined/>} onClick={onLogoutHandler}>

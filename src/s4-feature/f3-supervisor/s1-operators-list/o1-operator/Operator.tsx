@@ -1,16 +1,17 @@
-import React, {useEffect, useState} from 'react';
+import React, {ChangeEvent, useEffect, useState} from 'react';
 import s from './Operator.module.scss'
 import {Button, Flex, Input, Layout, Space, Spin, Table} from "antd";
 import {FileExcelFilled, HistoryOutlined, LoadingOutlined, PercentageOutlined, PhoneFilled} from "@ant-design/icons";
 import {ReactComponent as CrossedPhone} from "../../../../assets/crossed-phone.svg";
 import {Content, Footer, Header} from "antd/es/layout/layout";
 import {ColumnsType} from "antd/es/table";
-import {PATH} from "../../../../s1-main/routes/routes";
 import {useNavigate, useParams} from "react-router-dom";
 import {useDispatch} from "react-redux";
 import {fetchOperatorData} from "../../../../s2-bll/b2-supervisor/s3-operator-reducer/operator-reducer";
 import {useAppSelector} from "../../../../s2-bll/store";
 import moment from "moment";
+import {fetchOperatorNameData} from "../../../../s2-bll/b3-operator/o1-operator-name-reducer/operatorName-reducer";
+import {fetchBonusData} from "../../../../s2-bll/b2-supervisor/s9-bonus-reducer/bonus-reducer";
 
 interface OperatorDataType {
     key: React.Key
@@ -20,14 +21,12 @@ interface OperatorDataType {
     post_marks: string,
     sum_marks: number,
     is_cancelled: boolean,
+    is_bad: boolean
 }
 
-interface OperatorPropsType {
-    startDate: string
-    endDate: string
-}
 
-const Operator: React.FC<OperatorPropsType> = ({startDate, endDate}) => {
+
+const Operator= () => {
     const navigate = useNavigate()
     const {userID} = useParams()
     const dispatch = useDispatch<any>()
@@ -48,11 +47,45 @@ const Operator: React.FC<OperatorPropsType> = ({startDate, endDate}) => {
     const status = useAppSelector(state => state.supervisorOperatorData.status)
     const error = useAppSelector(state => state.supervisorOperatorData.errorMessage)
 
+    const {startPeriod, endPeriod} = useAppSelector(state => state.supervisorOperatorsListDateData.data)
+
+    const {name} = useAppSelector( state => state.operatorNameData.data)
+
+    const {bonus} = useAppSelector( state => state.supervisorBonusData.data)
+    const bonusStatus = useAppSelector( state => state.supervisorBonusData.status)
+
+
+    const [identifiedCalls, setIdentifiedCalls] = useState<number>(0)
+
+    const [query, setQuery] = useState<any>('')
+
+    const arrayRecordId = good_recs.map( rec => rec.id).concat(bad_recs.map(rec => rec.id))
 
     useEffect(() => {
-        userID && dispatch(fetchOperatorData(userID, startDate, endDate))
-    }, [])
+        dispatch(fetchBonusData)
+        userID && dispatch(fetchOperatorData(userID, startPeriod, endPeriod))
 
+    }, [])
+    useEffect(() => {
+        userID && dispatch(fetchOperatorNameData(userID))
+    }, [])
+    useEffect(() => {
+        arrayRecordId.length > 1 && dispatch(fetchBonusData(identifiedCalls, arrayRecordId))
+    }, [identifiedCalls])
+
+    const getRowClassName = (record:OperatorDataType) => {
+        return record.is_bad ? s.badRow : s.goodRow
+    };
+
+    const onLoadOperatorDataHandler = () => {
+        userID && dispatch(fetchOperatorData(userID, startPeriod, endPeriod, query))
+    }
+    const onChangeIdentifiedCallsHandler = (e: ChangeEvent<HTMLInputElement>) => {
+        setIdentifiedCalls(+e.target.value)
+    }
+    const onChangeQueryHandler = (e: ChangeEvent<HTMLInputElement>) => {
+        setQuery(e.currentTarget.value)
+    }
 
     const data: OperatorDataType[] = good_recs.map( (rec, index) => {
         return {
@@ -60,7 +93,8 @@ const Operator: React.FC<OperatorPropsType> = ({startDate, endDate}) => {
             ...rec,
             time_created: moment(rec.time_created).format('DD.MM.YYYY, HH:mm:ss'),
             is_cancelled: rec.is_cancelled ? rec.is_cancelled : false,
-            is_good: true
+            is_bad: false
+
         }
     }).concat(bad_recs.map((rec, index) => {
         return {
@@ -68,7 +102,7 @@ const Operator: React.FC<OperatorPropsType> = ({startDate, endDate}) => {
             ...rec,
             time_created: moment(rec.time_created).format('DD.MM.YYYY, HH:mm:ss'),
             is_cancelled:rec.is_cancelled ? rec.is_cancelled : false,
-            is_good: false
+            is_bad: true
         }
     }))
     const columns: ColumnsType<OperatorDataType> = [
@@ -332,12 +366,15 @@ const Operator: React.FC<OperatorPropsType> = ({startDate, endDate}) => {
                         borderBottom: '1px solid rgba(34, 60, 80, 0.1)'
                     }}>
                         <Flex justify={'space-between'} align={'center'} style={{fontSize: '16px'}}>
-                            <div>Баранчук Светлана Григорьевна</div>
+                            <div>{name}</div>
                             <Flex justify={'space-between'} align={'center'}>
                                 <span style={{marginRight: '5px'}}>Выявленных звонков: </span>
-                                <Input value={0} min={0} type={'number'} style={{width: '70px'}} />
+                                <Input value={identifiedCalls} onChange={onChangeIdentifiedCallsHandler} min={0} type={'number'} style={{width: '70px'}} />
                             </Flex>
-                            <div>Премия: 0%</div>
+                            <div><span style={{marginRight: '5px'}}>Премия:</span>{bonusStatus === "loading"
+                                ?
+                                <Spin indicator={<LoadingOutlined style={{fontSize: 24, color: '#757575'}} spin/>}/>
+                                : <>{`${bonus}%`}</>}</div>
                             <Flex>
                                 <Button type={'primary'} ghost style={{borderRadius: '3px', marginRight: '15px'}}
                                         onClick={() => navigate(-1)}>
@@ -363,12 +400,14 @@ const Operator: React.FC<OperatorPropsType> = ({startDate, endDate}) => {
                                     <Input value={pageSize} min={1} type={'number'} style={{width: '70px'}} onChange={(event) => setPageSize(+event.currentTarget.value)}/>
                                     <span style={{marginLeft: '5px'}}>записей</span>
                                 </Flex>
-                                <Flex align={'center'}><span style={{marginRight: '5px'}}>Поиск:</span> <Input.Search/></Flex>
+                                <Flex align={'center'}>
+                                    <span style={{marginRight: '5px'}}>Поиск:</span>
+                                    <Input.Search value={query} onSearch={onLoadOperatorDataHandler} onChange={onChangeQueryHandler}/></Flex>
                             </Flex>
                             <Table columns={columns} dataSource={data} pagination={{
                                 defaultCurrent: 1,
                                 pageSize
-                            }}/>
+                            }} rowClassName={getRowClassName} loading={status==="loading"}/>
                         </Flex>
                     </Content>
                     <Footer>

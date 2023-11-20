@@ -43,7 +43,7 @@ const initialState: InitState = {
     errorMessage: ''
 }
 
-export const OperatorsListStatisticsReducer = (state = initialState, action: ActionDataType) => {
+export const operatorsListStatisticsReducer = (state = initialState, action: ActionDataType) => {
     switch (action.type) {
         case SET_OPERATORS_LIST_STATISTICS_DATA: {
             return {
